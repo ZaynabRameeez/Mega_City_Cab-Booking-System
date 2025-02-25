@@ -20,12 +20,16 @@ public class User {
     private String gender;
     private String address; 
     private String photo;
-    private boolean isActive;
+    private boolean is_active;
+    private boolean is_approved;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
+
     
     
     // Constructor
     public User(int id, String username, String email, String phone, String password, String nic, 
-                String role, String gender, String address, String photo, boolean isActive) {
+                String role, String gender, String address, String photo, boolean is_active, boolean is_approved,Timestamp createdAt, Timestamp updatedAT) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -36,52 +40,27 @@ public class User {
         this.gender = gender;
         this.address = address;
         this.photo = photo;
-        this.isActive = isActive;
+        this.is_active = is_active;
+        this.is_approved= is_approved;
+        this.createdAt= createdAt;
+        this.updatedAt=updatedAT;
     }
 
     public User(String username, String email, String phone, String password, String nic, 
-            String role, String gender, String address) {
+            String gender, String address) {
     this.username = username;
     this.email = email;
     this.phone = phone;
     this.password = password;
     this.nic = nic;
-    this.role = role;
+    this.role = "User";
     this.gender = gender;
     this.address = address;
-    this.isActive = true; // Default value
+    this.is_active = true; // Default value
+    this.is_approved = false;
     this.photo = null; // Photo will be added later
 }
-
-
-//    
-//    public User(String username, String email, String phone, String nic, String password, String role, String gender, String address) {
-//    this.username = username;
-//    this.email = email;
-//    this.phone = phone;
-//    this.nic = nic;
-//    this.password = password;
-//    this.role = role;
-//    this.gender = gender;
-//    this.address = address;
-//    this.active = true;  // Default value
-//}
     
-//
-//     // Constructor with ID (for existing users)
-//    public User(int id, String username, String email, String phone, String nic, String password, String role, String gender, String address, boolean active) {
-//        this.id = id;
-//        this.username = username;
-//        this.email = email;
-//        this.phone = phone;
-//        this.nic = nic;
-//        this.password = password;
-//        this.role = role;
-//        this.gender = gender;
-//        this.address = address;
-//        this.active = active;
-//    }
-
      public User() {}
      
     public int getId() {
@@ -163,17 +142,42 @@ public class User {
      public void setPhoto(String photo) {
         this.photo = photo;
     }
-    
 
- // Fix active getter method
-    public boolean isActive() {
-        return isActive;
+    public boolean isIs_active() {
+        return is_active;
     }
 
-public void setActive(boolean isActive) {  // Correct method name
-    this.isActive = isActive;
-   
-      }
+    public void setIs_active(boolean is_active) {
+        this.is_active = is_active;
+    }
+
+    public boolean isIs_approved() {
+        return is_approved;
+    }
+
+    public void setIs_approved(boolean is_approved) {
+        this.is_approved = is_approved;
+    }
+    
+
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Timestamp getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+  
+
 }
 
 

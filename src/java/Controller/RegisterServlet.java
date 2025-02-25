@@ -46,7 +46,7 @@ public class RegisterServlet extends HttpServlet {
         }
 
         // Create user object
-        User newUser = new User(username, email, phone, password, nic, role, gender, address);
+        User newUser = new User(username, email, phone, password, nic, gender, address);
 
         // Register user
         String resultMessage = userService.registerUser(newUser);

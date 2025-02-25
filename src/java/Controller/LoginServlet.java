@@ -37,7 +37,7 @@ public class LoginServlet extends HttpServlet {
         User user = userDAO.getUserByEmail(email);
 
         if (user != null && PasswordUtils.verifyPassword(password, user.getPassword())) {
-            if (!user.isActive() && user.getRole().equalsIgnoreCase("driver")) {
+            if (!user.isIs_active()&& user.getRole().equalsIgnoreCase("driver")) {
                 request.setAttribute("errorMessage", "Your account is not yet approved by the admin.");
                 request.getRequestDispatcher("Login.jsp").forward(request, response);
                 return;

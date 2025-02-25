@@ -1,12 +1,11 @@
 package Service;
 
-
 import DAO.UserDAO;
 import Model.User;
 import Utils.PasswordUtils;
 
 public class UserService {
-    private UserDAO userDAO;
+    private final UserDAO userDAO;
 
     public UserService() {
         this.userDAO = new UserDAO();
@@ -14,33 +13,30 @@ public class UserService {
 
     // Register a New User
     public String registerUser(User user) {
-        // Check required fields
-        if (user.getUsername().isEmpty() || user.getEmail().isEmpty() || 
-            user.getPhone().isEmpty() || user.getPassword().isEmpty() || user.getNic().isEmpty()) {
+        if (user.getUsername() == null || user.getUsername().isEmpty() ||
+            user.getEmail() == null || user.getEmail().isEmpty() ||
+            user.getPhone() == null || user.getPhone().isEmpty() ||
+            user.getPassword() == null || user.getPassword().isEmpty() ||
+            user.getNic() == null || user.getNic().isEmpty()) {
             return "Missing required fields.";
         }
 
-        // Validate email format
         if (!user.getEmail().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
             return "Invalid email format.";
         }
 
-        // Validate password
         if (!user.getPassword().matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")) {
             return "Password must be at least 8 characters long, include 1 letter, 1 number, and 1 special character.";
         }
 
-        // Validate phone number (exactly 10 digits)
         if (!user.getPhone().matches("^\\d{10}$")) {
             return "Phone number must be exactly 10 digits.";
         }
 
-        // Validate NIC format (either 9 digits + 'V' or 12 digits)
-        if (!user.getNic().matches("^\\d{9}V|\\d{12}$")) {
+        if (!user.getNic().matches("^(\\d{9}V|\\d{12})$")) {
             return "NIC must be in the format 123456789V or 123456789012.";
         }
 
-        // Ensure email and username are unique
         if (userDAO.isEmailExists(user.getEmail())) {
             return "Email already exists. Please use a different one.";
         }
@@ -48,134 +44,51 @@ public class UserService {
             return "Username already exists. Please use a different one.";
         }
 
-        // Hash the password before storing it
+        // Hash password before storing
         user.setPassword(PasswordUtils.hashPassword(user.getPassword()));
 
-        // Insert into DB
-        boolean isRegistered = userDAO.registerUser(user);
-        return isRegistered ? "Registration successful!" : "Error in registration.";
+        return userDAO.registerUser(user) ? "Registration successful!" : "Error in registration.";
     }
 
-    // User Login
-    public User loginUser(String email, String password) {
-        User user = userDAO.authenticateUser(email, password);
-
-        if (user == null) {
-            System.out.println("Invalid email or password.");
-            return null;
+    // Request Driver Role
+    public String requestDriverRole(String email, String licenseNumber, String vehicleType) {
+        User user = userDAO.getUserByEmail(email);
+        if (user == null) {  
+            return "User not found.";
+        }
+        if (!user.getRole().equalsIgnoreCase("User")) {
+            return "You are already a driver.";
         }
 
-        // If the user is a driver, check if they are approved
-        if (user.getRole().equalsIgnoreCase("driver") && !user.isActive()) {
-            System.out.println("Your account is pending approval. Please wait for admin approval.");
-            return null;
+        // Check if user already submitted a request
+        if (userDAO.isDriverRequestPending(email)) {
+            return "You have already submitted a driver request. Please wait for approval.";
         }
 
-        return user; // Successful login
+        return userDAO.requestDriverRole(email, licenseNumber, vehicleType) ? 
+               "Driver role request submitted!" : "Error submitting request.";
     }
 
-//    // Admin Approval for Drivers
-//    public boolean approveDriver(int driverId) {
-//        return userDAO.approveDriver(driverId);
-//    }
-    
-    public User authenticateUser(String email, String password) {
-    UserDAO userDAO = new UserDAO();
-    User user = userDAO.getUserByEmail(email);
-
-    if (user != null) {
-        // Compare the stored hashed password with the entered password
-        if (PasswordUtils.verifyPassword(password, user.getPassword())) {
-            return user; // Successful login
+    // Reset Password
+    public boolean resetPassword(String email, String newPassword) {
+        if (!newPassword.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")) {
+            System.out.println("Password does not meet security requirements.");
+            return false;
         }
+        String hashedPassword = PasswordUtils.hashPassword(newPassword);
+        return userDAO.updatePassword(email, hashedPassword);
     }
-    return null; // Authentication failed
-}
-    public boolean resetPassword(String email, String newHashedPassword) {
-    return userDAO.updatePassword(email, newHashedPassword);
 }
 
 
-}
 
 
-//import DAO.UserDAO;
-//import Model.User;
-//import Utils.PasswordUtils;
-//import Utils.DBConfig;
-//import java.sql.SQLException;
-//import java.sql.Connection;
-//
-//public class UserService {
-//    private final UserDAO userDAO;
-//
-//
-//  // Constructor initializing DAO with a database connection
-//    public UserService() throws SQLException {
-//        Connection connection = DBConfig.getConnection(); // Might throw SQLException
-//        this.userDAO = new UserDAO(connection);
-//    }
-//
-//
-//    // Register user with validation
-//    public boolean registerUser(User user) {
-//        if (userDAO.isEmailTaken(user.getEmail())) {
-//            System.out.println("Email already in use.");
-//            return false;
-//        }
-//        if (userDAO.isUsernameTaken(user.getUsername())) {
-//            System.out.println("Username already taken.");
-//            return false;
-//        }
-//        if (!isValidPassword(user.getPassword())) {
-//            System.out.println("Invalid password format! Password must be at least 8 characters, include 1 letter, 1 number, and 1 special character.");
-//            return false;
-//        }
-//        if (!isValidPhone(user.getPhone())) {
-//            System.out.println("Invalid phone number format! Phone number must be 10 digits.");
-//            return false;
-//        }
-//
-//        // Hash the password before saving
-//        user.setPassword(PasswordUtils.hashPassword(user.getPassword()));
-//
-//        return userDAO.registerUser(user);
-//    }
-//
-//    // Authenticate user during login
-//    public User authenticateUser(String email, String password) {
-//        User user = userDAO.authenticateUser(email, password);
-//        if (user != null && PasswordUtils.verifyPassword(password, user.getPassword())) {
-//            return user; // Login success
-//        }
-//        return null; // Authentication failed
-//    }
-//
-//    // Retrieve user by email
-//    public User getUserByEmail(String email) {
-//        return userDAO.getUserByEmail(email);
-//    }
-//
-//    // Check if email is already taken
-//    public boolean isEmailTaken(String email) {
-//        return userDAO.isEmailTaken(email);
-//    }
-//
-//    // Check if username is already taken
-//    public boolean isUsernameTaken(String username) {
-//        return userDAO.isUsernameTaken(username);
-//    }
-//
-//    // Validate password: At least 8 characters, 1 letter, 1 number, 1 special character
-//    private boolean isValidPassword(String password) {
-//        return password.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@#$%^&+=!]).{8,}$");
-//    }
-//
-//    // Validate phone number: Must be 10 digits
-//    private boolean isValidPhone(String phone) {
-//        return phone.matches("^\\d{10}$");
-//    }
-//}
+
+
+
+
+
+
 
 
 
@@ -185,71 +98,100 @@ public class UserService {
 
 //package Service;
 //
+//
 //import DAO.UserDAO;
 //import Model.User;
-//import java.sql.Connection;
 //import Utils.PasswordUtils;
 //
 //public class UserService {
-//    private final UserDAO userDAO;
+//    private UserDAO userDAO;
 //
-//     // Constructor accepting Connection
-//    public UserService(Connection connection) {
-//        this.userDAO = new UserDAO(connection);
+//    public UserService() {
+//        this.userDAO = new UserDAO();
 //    }
 //
-//  
-//    // Register user with validation
-//    public boolean registerUser(User user) {
-//        if (userDAO.isEmailTaken(user.getEmail())) {
-//            System.out.println("Email already in use.");
-//            return false;
-//        }
-//        if (userDAO.isUsernameTaken(user.getUsername())) {
-//            System.out.println("Username already taken.");
-//            return false;
-//        }
-//        if (!isValidPassword(user.getPassword())) {
-//            System.out.println("Invalid password format! Password must be at least 8 characters, include 1 letter, 1 number, and 1 special character.");
-//            return false;
-//        }
-//        if (!isValidPhone(user.getPhone())) {
-//            System.out.println("Invalid phone number format! Phone number must be 10 digits.");
-//            return false;
+//    // Register a New User
+//    public String registerUser(User user) {
+//        // Check required fields
+//        if (user.getUsername().isEmpty() || user.getEmail().isEmpty() || 
+//            user.getPhone().isEmpty() || user.getPassword().isEmpty() || user.getNic().isEmpty()) {
+//            return "Missing required fields.";
 //        }
 //
-//        // Hash the password before saving
+//        // Validate email format
+//        if (!user.getEmail().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+//            return "Invalid email format.";
+//        }
+//
+//        // Validate password
+//        if (!user.getPassword().matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")) {
+//            return "Password must be at least 8 characters long, include 1 letter, 1 number, and 1 special character.";
+//        }
+//
+//        // Validate phone number (exactly 10 digits)
+//        if (!user.getPhone().matches("^\\d{10}$")) {
+//            return "Phone number must be exactly 10 digits.";
+//        }
+//
+//        // Validate NIC format (either 9 digits + 'V' or 12 digits)
+//        if (!user.getNic().matches("^\\d{9}V|\\d{12}$")) {
+//            return "NIC must be in the format 123456789V or 123456789012.";
+//        }
+//
+//        // Ensure email and username are unique
+//        if (userDAO.isEmailExists(user.getEmail())) {
+//            return "Email already exists. Please use a different one.";
+//        }
+//        if (userDAO.isUsernameExists(user.getUsername())) {
+//            return "Username already exists. Please use a different one.";
+//        }
+//
+//        // Hash the password before storing it
 //        user.setPassword(PasswordUtils.hashPassword(user.getPassword()));
 //
-//        return userDAO.registerUser(user);
+//        // Insert into DB
+//        boolean isRegistered = userDAO.registerUser(user);
+//        return isRegistered ? "Registration successful!" : "Error in registration.";
 //    }
 //
-//    // Authenticate user
-//    public User authenticateUser(String email, String password) {
-//        return userDAO.authenticateUser(email, password);
+//    // User Login
+//    public User loginUser(String email, String password) {
+//        User user = userDAO.authenticateUser(email, password);
+//
+//        if (user == null) {
+//            System.out.println("Invalid email or password.");
+//            return null;
+//        }
+//
+//        // If the user is a driver, check if they are approved
+//        if (user.getRole().equalsIgnoreCase("driver") && !user.isActive()) {
+//            System.out.println("Your account is pending approval. Please wait for admin approval.");
+//            return null;
+//        }
+//
+//        return user; // Successful login
 //    }
 //
-//    // Password validation: At least 8 characters, 1 letter, 1 number, 1 special character
-//    private boolean isValidPassword(String password) {
-//        return password.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@#$%^&+=!]).{8,}$");
-//    }
-//
-//    // Phone validation: Must be 10 digits
-//    private boolean isValidPhone(String phone) {
-//        return phone.matches("^\\d{10}$");
-//    }
-//
-//    public boolean isEmailTaken(String email) {
-//        return userDAO.isEmailTaken(email);
-//    }
+////    // Admin Approval for Drivers
+////    public boolean approveDriver(int driverId) {
+////        return userDAO.approveDriver(driverId);
+////    }
 //    
-//       // Retrieve user by email
-//    public User getUserByEmail(String email) {
-//        return userDAO.getUserByEmail(email);
+//    public User authenticateUser(String email, String password) {
+//    UserDAO userDAO = new UserDAO();
+//    User user = userDAO.getUserByEmail(email);
+//
+//    if (user != null) {
+//        // Compare the stored hashed password with the entered password
+//        if (PasswordUtils.verifyPassword(password, user.getPassword())) {
+//            return user; // Successful login
+//        }
 //    }
+//    return null; // Authentication failed
+//}
+//    public boolean resetPassword(String email, String newHashedPassword) {
+//    return userDAO.updatePassword(email, newHashedPassword);
+//}
 //
 //
-//    public boolean isUsernameTaken(String username) {
-//        return userDAO.isUsernameTaken(username);
-//    }
 //}
