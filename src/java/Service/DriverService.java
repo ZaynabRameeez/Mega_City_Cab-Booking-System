@@ -22,40 +22,40 @@ public class DriverService {
         return driverDAO.registerDriver(driver);
     }
 
-    // ✅ Update driver status (Active, Offline, Busy)
-    public boolean updateDriverStatus(int driverId, String status) {
-        return driverDAO.updateDriverStatus(driverId, status);
-    }
+//    // ✅ Update driver status (Active, Offline, Busy)
+//    public boolean updateDriverStatus(int driverId, String status) {
+//        return driverDAO.updateDriverStatus(driverId, status);
+//    }
+//
+//    // ✅ Update driver earnings
+//    public boolean updateDriverEarnings(int driverId, double amount) {
+//        return driverDAO.updateDriverEarnings(driverId, amount);
+//    }
+//
+//    // ✅ Request driver info update (Requires admin approval)
+//    public boolean updateDriverInfo(int driverId, String license, String vehicleType, String vehicleNumber) {
+//        return driverDAO.updateDriverInfo(driverId, license, vehicleType, vehicleNumber);
+//    }
+//
+//    // ✅ Get all rides assigned to a driver
+//    public List<Ride> getDriverRides(int driverId) {
+//        return driverDAO.getDriverRides(driverId);
+//    }
 
-    // ✅ Update driver earnings
-    public boolean updateDriverEarnings(int driverId, double amount) {
-        return driverDAO.updateDriverEarnings(driverId, amount);
-    }
-
-    // ✅ Request driver info update (Requires admin approval)
-    public boolean updateDriverInfo(int driverId, String license, String vehicleType, String vehicleNumber) {
-        return driverDAO.updateDriverInfo(driverId, license, vehicleType, vehicleNumber);
-    }
-
-    // ✅ Get all rides assigned to a driver
-    public List<Ride> getDriverRides(int driverId) {
-        return driverDAO.getDriverRides(driverId);
-    }
-
-    // ✅ Driver confirms ride
-    public boolean confirmRide(int rideId, int driverId) {
-        return driverDAO.confirmRide(rideId, driverId);
-    }
-
-    // ✅ Get driver status
-    public String getDriverStatus(int driverId) {
-        return driverDAO.getDriverStatus(driverId);
-    }
-
-    // ✅ Assign ride to driver
-    public boolean assignRideToDriver(int rideId, int driverId) {
-        return driverDAO.assignRideToDriver(rideId, driverId);
-    }
+//    // ✅ Driver confirms ride
+//    public boolean confirmRide(int rideId, int driverId) {
+//        return driverDAO.confirmRide(rideId, driverId);
+//    }
+//
+//    // ✅ Get driver status
+//    public String getDriverStatus(int driverId) {
+//        return driverDAO.getDriverStatus(driverId);
+//    }
+//
+//    // ✅ Assign ride to driver
+//    public boolean assignRideToDriver(int rideId, int driverId) {
+//        return driverDAO.assignRideToDriver(rideId, driverId);
+//    }
 }
 
 

@@ -17,9 +17,12 @@
     <script src="fareCalculator.js"></script> <!-- Include JS for fare calculation -->
 </head>
 <body>
-    <div class="container mt-5">
+     <jsp:include page="navbar.jsp"/>
+    <div class="container mt-5 pt-5">
         <h2 class="text-center">Book a Ride</h2>
         
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-sm-10">
         <!-- Step 1: Select Pickup & Dropoff -->
         <div id="step1">
             <div class="mb-3">
@@ -111,6 +114,24 @@
     </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 <!--<!DOCTYPE html>

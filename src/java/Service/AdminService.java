@@ -19,11 +19,7 @@ public class AdminService {
     public AdminService() {
         this.adminDAO = new AdminDAO();
     }
-    
-    //✅ Fetch all users
-    public List<User> getAllUsers() {
-        return adminDAO.getAllUsers();
-    }
+
 
 
     // ✅ Approve Driver (Admin Only)
@@ -35,14 +31,6 @@ public class AdminService {
         return adminDAO.approveDriver(driverId);
     }
 
-    // ✅ Update User Role (Admin Only)
-    public boolean updateUserRole(int adminId, int userId, String newRole) {
-        if (!adminDAO.isUserAdmin(adminId)) {
-            System.out.println("Access Denied: Only admins can update roles!");
-            return false;
-        }
-        return adminDAO.updateUserRole(userId, newRole);
-    }
 
     // ✅ Delete User (Admin Only)
     public boolean deleteUser(int adminId, int userId) {

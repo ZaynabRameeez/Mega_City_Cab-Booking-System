@@ -5,8 +5,8 @@
 --%>
 
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -16,6 +16,7 @@
     <title>Register - Mega City Cab</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 </head>
 <body class="bg-light">
 
@@ -23,73 +24,71 @@
     <div class="card p-4 shadow-lg" style="width: 400px;">
         <h3 class="text-center">Register</h3>
 
-        <%-- Display Error Messages --%>
+        <%-- Display Error Messages from Server --%>
         <% String errorMessage = (String) request.getAttribute("errorMessage"); %>
         <% if (errorMessage != null) { %>
             <div class="alert alert-danger text-center"><%= errorMessage %></div>
         <% } %>
 
-        <form action="RegisterServlet" method="post">
+        <form id="registerForm" action="RegisterServlet" method="post">
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
                 <input type="text" name="username" id="username" class="form-control" required>
+                <span id="username-error" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
                 <input type="email" name="email" id="email" class="form-control" required>
+                <span id="email-error" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
                 <label for="phone" class="form-label">Phone Number</label>
                 <input type="text" name="phone" id="phone" class="form-control" required>
-                <span id="phone-error" class="text-danger" style="font-size: 12px;"></span>
+                <span id="phone-error" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">NIC Number</label>
                 <input type="text" class="form-control" id="nic" name="nic" required>
-                <span id="nic-error" class="text-danger" style="font-size: 12px;"></span>
-            </div>
-
-            <div class="mb-3">
-                <label for="gender" class="form-label">Gender</label>
-                <select name="gender" id="gender" class="form-select" required>
-                    <option value="">Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label for="address" class="form-label">Address</label>
-                <textarea name="address" id="address" class="form-control" rows="2" required></textarea>
+                <span id="nic-error" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
                 <div class="input-group">
                     <input type="password" name="password" id="password" class="form-control" required>
-                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                    <button class="btn btn-outline-secondary toggle-password" type="button" data-target="password">
                         <i class="bi bi-eye"></i>
                     </button>
                 </div>
-                <span id="password-error" class="text-danger" style="font-size: 12px;"></span>
+                <span id="password-error" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
                 <label for="confirmPassword" class="form-label">Confirm Password</label>
                 <div class="input-group">
                     <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" required>
-                    <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
+                    <button class="btn btn-outline-secondary toggle-password" type="button" data-target="confirmPassword">
                         <i class="bi bi-eye"></i>
                     </button>
                 </div>
-                <span id="confirm-password-error" class="text-danger" style="font-size: 12px;"></span>
+                <span id="confirm-password-error" class="text-danger"></span>
             </div>
-
             
+            <div class="mb-3">
+                    <label class="form-label">Gender</label>
+                    <select class="form-select" name="gender" required>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Address</label>
+                    <textarea class="form-control" name="address" required></textarea>
+                </div>
 
             <button type="submit" class="btn btn-dark w-100">Register</button>
         </form>
@@ -102,73 +101,86 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        let phoneInput = document.getElementById("phone");
-        let nicInput = document.getElementById("nic");
-        let passwordInput = document.getElementById("password");
-        let confirmPasswordInput = document.getElementById("confirmPassword");
-        
-        phoneInput.addEventListener("keyup", validatePhone);
-        nicInput.addEventListener("keyup", validateNIC);
-        passwordInput.addEventListener("keyup", validatePassword);
-        confirmPasswordInput.addEventListener("keyup", validateConfirmPassword);
+        let form = document.getElementById("registerForm");
 
-        function validatePhone() {
-            let phoneRegex = /^[0-9]{10}$/;
-            let phoneError = document.getElementById("phone-error");
-
-            if (!phoneRegex.test(phoneInput.value)) {
-                phoneError.textContent = "Phone number must be exactly 10 digits.";
+        function validateField(input, regex, errorMessage, errorSpanId) {
+            let errorSpan = document.getElementById(errorSpanId);
+            if (!regex.test(input.value)) {
+                errorSpan.textContent = errorMessage;
+                return false;
             } else {
-                phoneError.textContent = "";
-            }
-        }
-
-        function validateNIC() {
-            let nicRegex = /^[0-9]{9}V$|^[0-9]{12}$/;
-            let nicError = document.getElementById("nic-error");
-
-            if (!nicRegex.test(nicInput.value)) {
-                nicError.textContent = "NIC must be in the format 123456789V or 123456789012.";
-            } else {
-                nicError.textContent = "";
+                errorSpan.textContent = "";
+                return true;
             }
         }
 
         function validatePassword() {
-            let passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+            let password = document.getElementById("password").value;
             let passwordError = document.getElementById("password-error");
+            let passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
 
-            if (!passwordRegex.test(passwordInput.value)) {
-                passwordError.textContent = "Password must have 8+ chars, 1 letter, 1 number, 1 special char.";
+            if (!passwordRegex.test(password)) {
+                passwordError.textContent = "Min 8 chars, 1 letter, 1 number, 1 special char";
+                return false;
             } else {
-                passwordError.textContent = "";
+                passwordError.textContent = "Password is strong!";
+                passwordError.style.color = "green";
+                return true;
             }
         }
 
         function validateConfirmPassword() {
+            let password = document.getElementById("password").value;
+            let confirmPassword = document.getElementById("confirmPassword").value;
             let confirmPasswordError = document.getElementById("confirm-password-error");
 
-            if (passwordInput.value !== confirmPasswordInput.value) {
+            if (password !== confirmPassword) {
                 confirmPasswordError.textContent = "Passwords do not match.";
+                return false;
             } else {
                 confirmPasswordError.textContent = "";
+                return true;
             }
         }
 
-        // Password toggle functionality
-        document.getElementById("togglePassword").addEventListener("click", function () {
-            let type = passwordInput.type === "password" ? "text" : "password";
-            passwordInput.type = type;
-            this.innerHTML = type === "password" ? '<i class="bi bi-eye"></i>' : '<i class="bi bi-eye-slash"></i>';
+        document.getElementById("phone").addEventListener("keyup", function () {
+            validateField(this, /^[0-9]{10}$/, "Phone must be 10 digits.", "phone-error");
         });
 
-        document.getElementById("toggleConfirmPassword").addEventListener("click", function () {
-            let type = confirmPasswordInput.type === "password" ? "text" : "password";
-            confirmPasswordInput.type = type;
-            this.innerHTML = type === "password" ? '<i class="bi bi-eye"></i>' : '<i class="bi bi-eye-slash"></i>';
+        document.getElementById("nic").addEventListener("keyup", function () {
+            validateField(this, /^[0-9]{9}[Vv]$|^[0-9]{12}$/, "NIC must be 123456789V or 123456789012.", "nic-error");
         });
 
-        // Redirect to login.jsp on successful registration
+        document.getElementById("password").addEventListener("keyup", validatePassword);
+        document.getElementById("confirmPassword").addEventListener("keyup", validateConfirmPassword);
+
+        form.addEventListener("submit", function (event) {
+            let isPhoneValid = validateField(document.getElementById("phone"), /^[0-9]{10}$/, "Phone must be 10 digits.", "phone-error");
+            let isNicValid = validateField(document.getElementById("nic"), /^[0-9]{9}[Vv]$|^[0-9]{12}$/, "NIC must be 123456789V or 123456789012.", "nic-error");
+            let isPasswordValid = validatePassword();
+            let isConfirmPasswordValid = validateConfirmPassword();
+
+            if (!isPhoneValid || !isNicValid || !isPasswordValid || !isConfirmPasswordValid) {
+                event.preventDefault();
+            }
+        });
+
+        document.querySelectorAll(".toggle-password").forEach(button => {
+            button.addEventListener("click", function () {
+                let targetId = this.getAttribute("data-target");
+                let input = document.getElementById(targetId);
+                let icon = this.querySelector("i");
+
+                if (input.type === "password") {
+                    input.type = "text";
+                    icon.classList.replace("bi-eye", "bi-eye-slash");
+                } else {
+                    input.type = "password";
+                    icon.classList.replace("bi-eye-slash", "bi-eye");
+                }
+            });
+        });
+
         <% String successMessage = (String) request.getAttribute("successMessage"); %>
         <% if (successMessage != null) { %>
             alert("<%= successMessage %>");
@@ -179,11 +191,6 @@
 
 </body>
 </html>
-
-
-
-
-
 
 
 

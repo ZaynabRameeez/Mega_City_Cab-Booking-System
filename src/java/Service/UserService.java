@@ -3,12 +3,16 @@ package Service;
 import DAO.UserDAO;
 import Model.User;
 import Utils.PasswordUtils;
+import jakarta.servlet.http.Part;
 
 public class UserService {
     private final UserDAO userDAO;
 
+
+
     public UserService() {
         this.userDAO = new UserDAO();
+     
     }
 
     // Register a New User
@@ -19,6 +23,7 @@ public class UserService {
             user.getPassword() == null || user.getPassword().isEmpty() ||
             user.getNic() == null || user.getNic().isEmpty()) {
             return "Missing required fields.";
+            
         }
 
         if (!user.getEmail().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
@@ -43,50 +48,100 @@ public class UserService {
         if (userDAO.isUsernameExists(user.getUsername())) {
             return "Username already exists. Please use a different one.";
         }
+       
 
-        // Hash password before storing
-        user.setPassword(PasswordUtils.hashPassword(user.getPassword()));
+//        // Hash password before storing
+//        user.setPassword(PasswordUtils.hashPassword(user.getPassword()));
 
         return userDAO.registerUser(user) ? "Registration successful!" : "Error in registration.";
     }
 
-    // Request Driver Role
-    public String requestDriverRole(String email, String licenseNumber, String vehicleType) {
-        User user = userDAO.getUserByEmail(email);
-        if (user == null) {  
-            return "User not found.";
-        }
-        if (!user.getRole().equalsIgnoreCase("User")) {
-            return "You are already a driver.";
+//    // Request Driver Role
+//    public String requestDriverRole(String email, String licenseNumber, String vehicleType, String vehicleNumber) {
+//        User user = userDAO.getUserByEmail(email);
+//        if (user == null) {  
+//            return "User not found.";
+//        }
+//        if (!user.getRole().equalsIgnoreCase("User")) {
+//            return "You are already a driver.";
+//        }
+//
+//        // Check if user already submitted a request
+//        if (userDAO.isDriverRequestPending(email)) {
+//            return "You have already submitted a driver request. Please wait for approval.";
+//        }
+//
+//        return userDAO.requestDriverRole(email, licenseNumber, vehicleType, vehicleNumber) ? 
+//               "Driver role request submitted!" : "Error submitting request.";
+//    }
+    public boolean resetPassword(String email, String hashedPassword) {
+    return userDAO.resetPassword(email, hashedPassword);
+}
+//    public boolean updateUserProfile(User user, Part profilePicPart) {
+//    return userDAO.updateUserProfile(user, profilePicPart);
+//}
+
+  
+    public boolean updateUserProfile(User user) {
+        if (user.getUsername() == null || user.getUsername().trim().isEmpty() ||
+            user.getEmail() == null || user.getEmail().trim().isEmpty() ||
+            user.getPhone() == null || user.getPhone().trim().isEmpty()) {
+            return false; // Validation: No empty or null fields
         }
 
-        // Check if user already submitted a request
-        if (userDAO.isDriverRequestPending(email)) {
-            return "You have already submitted a driver request. Please wait for approval.";
-        }
-
-        return userDAO.requestDriverRole(email, licenseNumber, vehicleType) ? 
-               "Driver role request submitted!" : "Error submitting request.";
-    }
-
-    // Reset Password
-    public boolean resetPassword(String email, String newPassword) {
-        if (!newPassword.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")) {
-            System.out.println("Password does not meet security requirements.");
+        // Email validation (Basic regex)
+        if (!user.getEmail().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
             return false;
         }
-        String hashedPassword = PasswordUtils.hashPassword(newPassword);
-        return userDAO.updatePassword(email, hashedPassword);
+
+        // Phone validation (Ensure it's numeric and 10 digits)
+        if (!user.getPhone().matches("\\d{10}")) {
+            return false;
+        }
+
+        return userDAO.updateUserProfile(user);
     }
+
+    public boolean removeProfilePhoto(int userId) {
+        return userDAO.removeProfilePhoto(userId);
+    }
+
+  
+
+    public boolean updateProfilePhoto(int userId, String photoPath) {
+        return userDAO.updateProfilePhoto(userId, photoPath);
+    }
+public boolean verifyPassword(int userId, String oldPassword) {
+    return userDAO.verifyOldPassword(userId, oldPassword);
 }
 
+   public boolean changePassword(int userId, String oldPassword, String newPassword) {
+    if (!userDAO.verifyOldPassword(userId, oldPassword)) {
+        return false; // Old password incorrect
+    }
 
+    // Hash new password before updating
+    String hashedPassword = PasswordUtils.hashPassword(newPassword);
+    return userDAO.updatePassword(userId, hashedPassword);
+}
 
+  public User getUserById(int userId){
+      return userDAO.getUserById(userId);
+  }
+     public boolean deleteUser(int userId) {
+        return userDAO.deleteUser(userId);
+    }
+//     public boolean sendDriverRequest(int userId, String license, String vehicleType, String vehicleNumber) {
+//        return userDAO.sendDriverRequest(userId, license, vehicleType, vehicleNumber);
+//    }
 
+ 
 
+   
 
-
-
+  
+ 
+}
 
 
 

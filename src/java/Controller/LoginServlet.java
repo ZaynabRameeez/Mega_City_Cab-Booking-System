@@ -3,11 +3,7 @@
 // * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
 // */
 
-
-
 package Controller;
-
-
 
 import Model.User;
 import DAO.UserDAO;
@@ -20,6 +16,11 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 public class LoginServlet extends HttpServlet {
+    
+     protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.sendRedirect("Login.jsp"); // Redirect GET requests to login page
+    }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -37,29 +38,103 @@ public class LoginServlet extends HttpServlet {
         User user = userDAO.getUserByEmail(email);
 
         if (user != null && PasswordUtils.verifyPassword(password, user.getPassword())) {
-            if (!user.isIs_active()&& user.getRole().equalsIgnoreCase("driver")) {
-                request.setAttribute("errorMessage", "Your account is not yet approved by the admin.");
-                request.getRequestDispatcher("Login.jsp").forward(request, response);
-                return;
-            }
 
+             String redirectURL = "UsersDashboard.jsp"; // Default for normal users
             // Store user session
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
 
-            if (user.getRole().equalsIgnoreCase("admin")) {
-                response.sendRedirect("AdminDashboard.jsp");
-            } else if (user.getRole().equalsIgnoreCase("driver")) {
-                response.sendRedirect("DriverDashboard.jsp");
-            } else {
-                response.sendRedirect("UsersDashboard.jsp");
+             if ("admin".equalsIgnoreCase(user.getRole())) {
+                redirectURL = "AdminDashboard.jsp";
+            } else if ("approved".equalsIgnoreCase(user.getStatus()) && "driver".equalsIgnoreCase(user.getRole())) {
+                redirectURL = "DriverDashboard.jsp";
             }
+
+            response.sendRedirect(redirectURL); // Ensure only one redirect happens
+
         } else {
             request.setAttribute("errorMessage", "Invalid email or password.");
             request.getRequestDispatcher("Login.jsp").forward(request, response);
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//
+//package Controller;
+//
+//
+//
+//import Model.User;
+//import DAO.UserDAO;
+//import Utils.PasswordUtils;
+//import jakarta.servlet.ServletException;
+//import jakarta.servlet.http.HttpServlet;
+//import jakarta.servlet.http.HttpServletRequest;
+//import jakarta.servlet.http.HttpServletResponse;
+//import jakarta.servlet.http.HttpSession;
+//import java.io.IOException;
+//
+//public class LoginServlet extends HttpServlet {
+//
+//    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+//            throws ServletException, IOException {
+//
+//        String email = request.getParameter("email");
+//        String password = request.getParameter("password");
+//
+//        if (email == null || password == null || email.trim().isEmpty() || password.trim().isEmpty()) {
+//            request.setAttribute("errorMessage", "Email and password are required.");
+//            request.getRequestDispatcher("Login.jsp").forward(request, response);
+//            return;
+//        }
+//
+//        UserDAO userDAO = new UserDAO();
+//        User user = userDAO.getUserByEmail(email);
+//
+//        if (user != null && PasswordUtils.verifyPassword(password, user.getPassword())) {
+//            if (!user.isActive()&& user.getRole().equalsIgnoreCase("driver")) {
+//                request.setAttribute("errorMessage", "Your account is not yet approved by the admin.");
+//                request.getRequestDispatcher("Login.jsp").forward(request, response);
+//                return;
+//            }
+//
+//            // Store user session
+//            HttpSession session = request.getSession();
+//            session.setAttribute("user", user);
+//
+//            if (user.getRole().equalsIgnoreCase("admin")) {
+//                response.sendRedirect("AdminDashboard.jsp");
+//            } else if (user.getRole().equalsIgnoreCase("driver")) {
+//                response.sendRedirect("DriverDashboard.jsp");
+//            } else {
+//                response.sendRedirect("UsersDashboard.jsp");
+//            }
+//        } else {
+//            request.setAttribute("errorMessage", "Invalid email or password.");
+//            request.getRequestDispatcher("Login.jsp").forward(request, response);
+//        }
+//    }
+//}
 
 
 

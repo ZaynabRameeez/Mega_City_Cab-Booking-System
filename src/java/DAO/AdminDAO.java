@@ -15,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import Model.User;
 import Model.Driver;
+import Service.UserService;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,57 +35,111 @@ public class AdminDAO {
         }
         return false;
     }
-
-    // ✅ Approve a driver using driverId
-    public boolean approveDriver(int driverId) {
-        String sql = "UPDATE users SET is_active = TRUE WHERE id = ? AND LOWER(role) = 'driver'";
-        try (Connection conn = DBConfig.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, driverId);
-            return stmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            System.err.println("Error approving driver: " + e.getMessage());
-        }
-        return false;
-    }
-
-    // ✅ Fetch all users
-    public List<User> getAllUsers() {
-        List<User> users = new ArrayList<>();
-        String sql = "SELECT id, username, email, role, is_active FROM users";
-
-        try (Connection conn = DBConfig.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-
+    
+    public static List<Driver> getPendingDrivers() {
+        List<Driver> drivers = new ArrayList<>();
+        try (Connection con = DBConfig.getConnection();
+             PreparedStatement ps = con.prepareStatement("SELECT * FROM drivers WHERE status = 'pending'")) {
+            
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                User user = new User();
-                user.setId(rs.getInt("id"));
-                user.setUsername(rs.getString("username"));
-                user.setEmail(rs.getString("email"));
-                user.setRole(rs.getString("role"));
-                user.setActive(rs.getBoolean("is_active"));
-                users.add(user);
+                Driver driver = new Driver();
+                driver.setDriverId(rs.getInt("driver_id"));
+                driver.setId(rs.getInt("id"));  // Ensure `user_id` is in your table
+                driver.setLicenseNumber(rs.getString("license_number"));
+                driver.setVehicleNumber(rs.getString("vehicle_number"));
+                drivers.add(driver);
             }
         } catch (SQLException e) {
-            System.err.println("Error fetching users: " + e.getMessage());
+            e.printStackTrace();
         }
-        return users;
+        return drivers;
     }
 
-    // ✅ Update user role (Admins cannot be changed)
-    public boolean updateUserRole(int userId, String newRole) {
-        String sql = "UPDATE users SET role = ? WHERE id = ? AND LOWER(role) != 'admin'";
-        try (Connection conn = DBConfig.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, newRole);
-            stmt.setInt(2, userId);
-            return stmt.executeUpdate() > 0;
+    
+    
+     public static boolean approveDriver(int driverId, int userId) throws SQLException {
+        Connection conn = DBConfig.getConnection();
+        boolean success = false;
+
+        try {
+            // Approve the driver
+            String approveQuery = "UPDATE drivers SET is_approved = 1, status = 'Approved' WHERE driver_id = ?";
+            PreparedStatement approveStmt = conn.prepareStatement(approveQuery);
+            approveStmt.setInt(1, driverId);
+            int approveResult = approveStmt.executeUpdate();
+
+            // Update the user's role to Driver
+            String roleQuery = "UPDATE users SET role = 'Driver' WHERE id = ?";
+            PreparedStatement roleStmt = conn.prepareStatement(roleQuery);
+            roleStmt.setInt(1, userId);
+            int roleResult = roleStmt.executeUpdate();
+
+            if (approveResult > 0 && roleResult > 0) {
+                success = true;
+            }
         } catch (SQLException e) {
-            System.err.println("Error updating user role: " + e.getMessage());
+            e.printStackTrace();
         }
-        return false;
+
+        return success;
     }
+     public static boolean rejectDriver(int driverId, int userId) throws SQLException {
+        Connection conn = DBConfig.getConnection();
+        boolean success = false;
+
+        try {
+            // Delete driver record from the database
+            String deleteDriverQuery = "DELETE FROM drivers WHERE driver_id = ?";
+            PreparedStatement stmt = conn.prepareStatement(deleteDriverQuery);
+            stmt.setInt(1, driverId);
+            int rowsDeleted = stmt.executeUpdate();
+
+            if (rowsDeleted > 0) {
+                success = true;
+            }
+        } finally {
+            conn.close();
+        }
+
+        return success;
+    }
+
+
+    
+
+    // ✅ Approve a driver using driverId
+  
+//    public boolean approveDriver(int driverId) {
+//        String query = "UPDATE users SET status = 'approved', role = 'driver' WHERE id = ?";
+//
+//        try (Connection conn = DBConfig.getConnection();
+//             PreparedStatement stmt = conn.prepareStatement(query)) {
+//
+//            stmt.setInt(1, driverId);
+//            int rowsUpdated = stmt.executeUpdate();
+//            return rowsUpdated > 0;
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return false;
+//    }
+
+  
+//
+//    // ✅ Update user role (Admins cannot be changed)
+//    public boolean updateUserRole(int userId, String newRole) {
+//        String sql = "UPDATE users SET role = ? WHERE id = ? AND LOWER(role) != 'admin'";
+//        try (Connection conn = DBConfig.getConnection();
+//             PreparedStatement stmt = conn.prepareStatement(sql)) {
+//            stmt.setString(1, newRole);
+//            stmt.setInt(2, userId);
+//            return stmt.executeUpdate() > 0;
+//        } catch (SQLException e) {
+//            System.err.println("Error updating user role: " + e.getMessage());
+//        }
+//        return false;
+//    }
 
     // ✅ Delete a user (Admins cannot be deleted)
     public boolean deleteUser(int userId) {
@@ -141,57 +196,10 @@ public class AdminDAO {
         return 0;
     }
 
-    // ✅ Get pending driver requests
-    public List<User> getPendingDriverRequests() {
-        List<User> pendingDrivers = new ArrayList<>();
-        String sql = "SELECT u.id, u.username, u.email, d.license_number, d.vehicle_type " +
-                     "FROM users u JOIN driver_requests d ON u.id = d.user_id WHERE d.status = 'Pending'";
+    
 
-        try (Connection conn = DBConfig.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+    
 
-            while (rs.next()) {
-                User user = new User();
-                user.setId(rs.getInt("id"));
-                user.setUsername(rs.getString("username"));
-                user.setEmail(rs.getString("email"));
-                user.setLicenseNumber(rs.getString("license_number"));
-                user.setVehicleType(rs.getString("vehicle_type"));
-                pendingDrivers.add(user);
-            }
-        } catch (SQLException e) {
-            System.err.println("Error fetching pending drivers: " + e.getMessage());
-        }
-        return pendingDrivers;
-    }
-
-    // ✅ Approve Driver Request by Email
-    public boolean approveDriverByEmail(String email) {
-        String sql = "UPDATE users SET role = 'Driver', is_active = TRUE WHERE email = ?";
-        String deleteRequest = "DELETE FROM driver_requests WHERE email = ?";
-
-        try (Connection conn = DBConfig.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             PreparedStatement deleteStmt = conn.prepareStatement(deleteRequest)) {
-
-            stmt.setString(1, email);
-            deleteStmt.setString(1, email);
-
-            if (stmt.executeUpdate() > 0) {
-                deleteStmt.executeUpdate();
-                return true;
-            }
-        } catch (SQLException e) {
-            System.err.println("Error approving driver: " + e.getMessage());
-        }
-        return false;
-    }
-
-    // ✅ Reject Driver Request
-    public boolean rejectDriverRequest(String email) {
-        return executeUpdate("DELETE FROM driver_requests WHERE email = ?", email);
-    }
 
     // ✅ Reusable update method
     private boolean executeUpdate(String sql, String param) {
@@ -205,6 +213,35 @@ public class AdminDAO {
         return false;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

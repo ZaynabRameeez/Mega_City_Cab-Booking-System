@@ -1,22 +1,7 @@
-<%@page import="java.util.List"%>
-<%@page import="Model.User"%>
-<%
-    List<User> users = (List<User>) request.getAttribute("users");
-    int totalUsers = (request.getAttribute("totalUsers") != null) ? (int) request.getAttribute("totalUsers") : 0;
-    int totalDrivers = (request.getAttribute("totalDrivers") != null) ? (int) request.getAttribute("totalDrivers") : 0;
-    int pendingApprovals = (request.getAttribute("pendingApprovals") != null) ? (int) request.getAttribute("pendingApprovals") : 0;
 
-    int activeUsers = 0, inactiveUsers = 0;
-    if (users != null) {
-        for (User user : users) {
-            if (user.isActive()) {
-                activeUsers++;
-            } else {
-                inactiveUsers++;
-            }
-        }
-    }
-%>
+
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@page import="Model.User"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,96 +9,108 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .sidebar {
+            height: 100vh;
+            width: 250px;
+            position: fixed;
+            background: #343a40;
+            padding-top: 20px;
+        }
+        .sidebar a {
+            padding: 10px 20px;
+            display: block;
+            color: white;
+            text-decoration: none;
+        }
+        .sidebar a:hover {
+            background-color: #007bff;
+        }
+        .content {
+            margin-left: 260px;
+            padding: 20px;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
-<body class="bg-light">
-    <div class="container mt-5">
-        <h2 class="text-center mb-4">Admin Dashboard</h2>
-        
-        <!-- Dashboard Cards -->
-        <div class="row text-center">
-            <div class="col-md-4">
-                <div class="card p-3">
-                    <h4>Total Users</h4>
-                    <p class="fw-bold"><%= totalUsers %></p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card p-3">
-                    <h4>Total Drivers</h4>
-                    <p class="fw-bold"><%= totalDrivers %></p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card p-3">
-                    <h4>Pending Approvals</h4>
-                    <p class="fw-bold text-warning"><%= pendingApprovals %></p>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Chart -->
-        <div class="mt-4">
-            <canvas id="userChart"></canvas>
-        </div>
-        
-        <!-- User Table -->
-        <div class="table-responsive mt-4">
-            <table class="table table-bordered table-striped">
-                <thead class="table-dark">
-                    <tr>
-                        <th>ID</th>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% if (users != null && !users.isEmpty()) { %>
-                        <% for (User user : users) { %>
-                            <tr>
-                                <td><%= user.getId() %></td>
-                                <td><%= user.getUsername() %></td>
-                                <td><%= user.getEmail() %></td>
-                                <td><%= user.getRole() %></td>
-                                <td class="<%= user.isActive() ? "text-success" : "text-danger" %>">
-                                    <%= user.isActive() ? "Active" : "Inactive" %>
-                                </td>
-                                <td>
-                                    <button class="btn btn-primary btn-sm">Edit</button>
-                                    <button class="btn btn-danger btn-sm">Delete</button>
-                                </td>
-                            </tr>
-                        <% } %>
-                    <% } else { %>
-                        <tr>
-                            <td colspan="6" class="text-center">No users found.</td>
-                        </tr>
-                    <% } %>
-                </tbody>
-            </table>
-        </div>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <h4 class="text-center text-white">Admin Panel</h4>
+        <a href="AdminDashboard.jsp">Dashboard</a>
+        <a href="ManageUsers.jsp">Manage Users</a>
+        <a href="ManageDrivers.jsp">Manage Drivers</a>
+        <a href="ManageVehicle.jsp">Manage Vehicles</a>
+        <a href="manageBookings.jsp">Manage Bookings</a>
+        <a href="paymentManagement.jsp">Payment Management</a>
+        <a href="updateSystemSettings.jsp">System Settings</a>
+        <a href="systemReports.jsp">System Reports</a>
+        <a href="LogoutServlet">Logout</a>
     </div>
 
-    <script>
-        // Chart.js Implementation with Dynamic Data
-        const ctx = document.getElementById('userChart');
-        new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Active Users', 'Inactive Users'],
-                datasets: [{
-                    label: 'User Status',
-                    data: [<%= activeUsers %>, <%= inactiveUsers %>],
-                    backgroundColor: ['#28a745', '#dc3545'],
-                }]
-            }
-        });
-    </script>
+    <!-- Main Content -->
+    <div class="content">
+        <h2>Welcome, Admin</h2>
 
-    <!-- Bootstrap JS -->
+        <!-- Stats Cards -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card text-white bg-primary mb-3">
+                    <div class="card-body">
+                        <h5>Total Users</h5>
+                        <h2>150</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-success mb-3">
+                    <div class="card-body">
+                        <h5>Total Drivers</h5>
+                        <h2>50</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-warning mb-3">
+                    <div class="card-body">
+                        <h5>Total Bookings</h5>
+                        <h2>320</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-danger mb-3">
+                    <div class="card-body">
+                        <h5>Pending Approvals</h5>
+                        <h2>5</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <a href="ManageUsers.jsp" class="btn btn-primary btn-lg btn-block">Manage Users</a>
+            </div>
+            <div class="col-md-4">
+                <a href="ManageDrivers.jsp" class="btn btn-success btn-lg btn-block">Manage Drivers</a>
+            </div>
+            <div class="col-md-4">
+                <a href="manageBookings.jsp" class="btn btn-warning btn-lg btn-block">Manage Bookings</a>
+            </div>
+        </div>
+
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

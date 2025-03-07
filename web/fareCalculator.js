@@ -4,11 +4,25 @@
  */
 
 
+
+
+
+
+
+
+
+
+
 document.getElementById("calculateFare").addEventListener("click", function() {
-    let pickupLat = document.getElementById("pickupLat").value;
-    let pickupLon = document.getElementById("pickupLon").value;
-    let dropLat = document.getElementById("dropLat").value;
-    let dropLon = document.getElementById("dropLon").value;
+    let pickupLat = document.getElementById("pickupLat").value.trim();
+    let pickupLon = document.getElementById("pickupLon").value.trim();
+    let dropLat = document.getElementById("dropLat").value.trim();
+    let dropLon = document.getElementById("dropLon").value.trim();
+    
+    if (!pickupLat || !pickupLon || !dropLat || !dropLon) {
+        showError("Please enter valid pickup and drop-off locations.");
+        return;
+    }
 
     fetch("FareCalculatorServlet", {
         method: "POST",
@@ -18,39 +32,105 @@ document.getElementById("calculateFare").addEventListener("click", function() {
     .then(response => response.json())
     .then(data => {
         if (data.error) {
-            alert(data.error);
+            showError(data.error);
             return;
         }
 
-        let distance = parseFloat(data.distance).toFixed(2); // Get distance from the backend response
-        
-        document.getElementById("fareDisplay").innerHTML = 
-            `Distance: ${distance} km <br> Select a vehicle to see the fare.`;
+        let distance = parseFloat(data.distance).toFixed(2);
+        if (distance <= 0) {
+            showError("Invalid distance calculated. Try again.");
+            return;
+        }
 
-        // Store distance in a hidden field for vehicle selection
+        document.getElementById("fareDisplay").innerHTML = 
+            `<strong>Distance:</strong> ${distance} km <br> Select a vehicle to see the fare.`;
+
         document.getElementById("rideDistance").value = distance;
     })
-    .catch(error => console.error("Error:", error));
+    .catch(() => showError("Failed to calculate distance. Please try again."));
 });
 
 // Vehicle Selection & Fare Calculation
 $(".vehicle-card").click(function() {
+    let distance = parseFloat($("#rideDistance").val()) || 0;
+
+    if (distance === 0) {
+        showError("Please calculate the distance first.");
+        return;
+    }
+
     $(".vehicle-card").removeClass("border border-primary");
     $(this).addClass("border border-primary");
 
     let baseFare = parseFloat($(this).data("price"));
-    let distance = parseFloat($("#rideDistance").val()) || 0;
-
-    if (distance === 0) {
-        alert("Please calculate the distance first.");
-        return;
-    }
-
     let totalFare = baseFare * distance;
-    $(this).find(".fare").text(`Rs. ${totalFare.toFixed(2)}`);
+
+    $(this).find(".fare").html(`<strong>Fare:</strong> Rs. ${totalFare.toFixed(2)}`);
 
     $("#paymentSection").removeClass("d-none");
+
+    // Store selected vehicle ID (assuming `data-id` holds the vehicle ID)
+    $("#selectedVehicle").val($(this).data("id"));
 });
+
+// Show error messages
+function showError(message) {
+    $("#errorMessage").text(message).removeClass("d-none").fadeIn();
+
+    setTimeout(() => {
+        $("#errorMessage").fadeOut();
+    }, 3000);
+}
+
+
+
+//document.getElementById("calculateFare").addEventListener("click", function() {
+//    let pickupLat = document.getElementById("pickupLat").value;
+//    let pickupLon = document.getElementById("pickupLon").value;
+//    let dropLat = document.getElementById("dropLat").value;
+//    let dropLon = document.getElementById("dropLon").value;
+//
+//    fetch("FareCalculatorServlet", {
+//        method: "POST",
+//        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+//        body: `pickupLat=${pickupLat}&pickupLon=${pickupLon}&dropLat=${dropLat}&dropLon=${dropLon}`
+//    })
+//    .then(response => response.json())
+//    .then(data => {
+//        if (data.error) {
+//            alert(data.error);
+//            return;
+//        }
+//
+//        let distance = parseFloat(data.distance).toFixed(2); // Get distance from the backend response
+//        
+//        document.getElementById("fareDisplay").innerHTML = 
+//            `Distance: ${distance} km <br> Select a vehicle to see the fare.`;
+//
+//        // Store distance in a hidden field for vehicle selection
+//        document.getElementById("rideDistance").value = distance;
+//    })
+//    .catch(error => console.error("Error:", error));
+//});
+//
+//// Vehicle Selection & Fare Calculation
+//$(".vehicle-card").click(function() {
+//    $(".vehicle-card").removeClass("border border-primary");
+//    $(this).addClass("border border-primary");
+//
+//    let baseFare = parseFloat($(this).data("price"));
+//    let distance = parseFloat($("#rideDistance").val()) || 0;
+//
+//    if (distance === 0) {
+//        alert("Please calculate the distance first.");
+//        return;
+//    }
+//
+//    let totalFare = baseFare * distance;
+//    $(this).find(".fare").text(`Rs. ${totalFare.toFixed(2)}`);
+//
+//    $("#paymentSection").removeClass("d-none");
+//});
 
 
 

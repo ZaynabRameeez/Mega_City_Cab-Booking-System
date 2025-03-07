@@ -13,7 +13,7 @@
     User driver = (User) sessionObj.getAttribute("user");
 
     if (driver == null || !"driver".equalsIgnoreCase(driver.getRole())) {
-        response.sendRedirect("login.jsp");
+        response.sendRedirect("Login.jsp");
         return;
     }
 

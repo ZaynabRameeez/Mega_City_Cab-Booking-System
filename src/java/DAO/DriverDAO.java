@@ -5,158 +5,41 @@
 
 package DAO;
 
-import Model.Driver;
-import Model.Ride;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import Utils.DBConfig;
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DriverDAO {
+   public static boolean registerDriver(int userId, String licenseNumber, String vehicleType, String vehicleNumber) throws SQLException {
+    Connection conn = DBConfig.getConnection();
+   boolean success = false;  // Declare the variable here
 
-    // ✅ Register Driver (Insert new driver request)
-    public boolean registerDriver(Driver driver) {
-        String query = "INSERT INTO drivers (id, licenseNumber, vehicleType, vehicleNumber, is_approved, status, totalRides, earnings, rating) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try (Connection conn = DBConfig.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
 
-            stmt.setInt(1, driver.getId());
-            stmt.setString(2, driver.getLicenseNumber());
-            stmt.setString(3, driver.getVehicleType());
-            stmt.setString(4, driver.getVehicleNumber());
-            stmt.setBoolean(5, false);  // Default: Not approved
-            stmt.setString(6, "Pending");
-            stmt.setInt(7, 0);  // Default total rides = 0
-            stmt.setDouble(8, 0.0);  // Default earnings = 0
-            stmt.setDouble(9, 0.0);  // Default rating = 0
+        try {
+            // Insert into drivers table
+            String driverQuery = "INSERT INTO drivers (user_id, license_number, is_approved, status) VALUES (?, ?, 0, 'Pending')";
+            PreparedStatement driverStmt = conn.prepareStatement(driverQuery);
+            driverStmt.setInt(1, userId);
+            driverStmt.setString(2, licenseNumber);
+            int driverResult = driverStmt.executeUpdate();
 
-            return stmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
+            // Insert into vehicles table
+            String vehicleQuery = "INSERT INTO vehicles (vehicle_number, type_id, driver_id) VALUES (?, (SELECT id FROM vehicle_types WHERE type_name=?), (SELECT driver_id FROM drivers WHERE user_id=?))";
+            PreparedStatement vehicleStmt = conn.prepareStatement(vehicleQuery);
+            vehicleStmt.setString(1, vehicleNumber);
+            vehicleStmt.setString(2, vehicleType);
+            vehicleStmt.setInt(3, userId);
+            int vehicleResult = vehicleStmt.executeUpdate();
 
-    // ✅ Update Driver Status (Active, Busy, Offline)
-    public boolean updateDriverStatus(int driverId, String status) {
-        String query = "UPDATE drivers SET status = ? WHERE driver_id = ?";
-        try (Connection conn = DBConfig.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            stmt.setString(1, status);
-            stmt.setInt(2, driverId);
-            return stmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    // ✅ Update Driver Earnings
-    public boolean updateDriverEarnings(int driverId, double amount) {
-        String query = "UPDATE drivers SET earnings = earnings + ? WHERE driver_id = ?";
-        try (Connection conn = DBConfig.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            stmt.setDouble(1, amount);
-            stmt.setInt(2, driverId);
-            return stmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    // ✅ Update Driver Info (Requires Admin Approval)
-    public boolean updateDriverInfo(int driverId, String license, String vehicleType, String vehicleNumber) {
-        String query = "UPDATE drivers SET licenseNumber = ?, vehicleType = ?, vehicleNumber = ?, is_approved = false WHERE driver_id = ?";
-        try (Connection conn = DBConfig.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            stmt.setString(1, license);
-            stmt.setString(2, vehicleType);
-            stmt.setString(3, vehicleNumber);
-            stmt.setInt(4, driverId);
-            return stmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    // ✅ Get All Rides Assigned to a Driver
-    public List<Ride> getDriverRides(int driverId) {
-        List<Ride> rides = new ArrayList<>();
-        String query = "SELECT * FROM rides WHERE driver_id = ?";
-        try (Connection conn = DBConfig.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            stmt.setInt(1, driverId);
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                Ride ride = new Ride(
-                    rs.getInt("ride_id"),
-                    rs.getInt("user_id"),
-                    rs.getInt("driver_id"),
-                    rs.getString("pickup"),
-                    rs.getString("dropoff"),
-                    rs.getDouble("fare"),
-                    rs.getString("status") // e.g., Pending, Completed
-                );
-                rides.add(ride);
+            if (driverResult > 0 && vehicleResult > 0) {
+                success = true;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return rides;
-    }
 
-    // ✅ Confirm Ride (Driver Accepts)
-    public boolean confirmRide(int rideId, int driverId) {
-        String query = "UPDATE rides SET status = 'Accepted' WHERE ride_id = ? AND driver_id = ?";
-        try (Connection conn = DBConfig.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            stmt.setInt(1, rideId);
-            stmt.setInt(2, driverId);
-            return stmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    // ✅ Get Driver Status
-    public String getDriverStatus(int driverId) {
-        String query = "SELECT status FROM drivers WHERE driver_id = ?";
-        try (Connection conn = DBConfig.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            stmt.setInt(1, driverId);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getString("status");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return "Unavailable"; // Default
-    }
-
-    // ✅ Assign Ride to Driver
-    public boolean assignRideToDriver(int rideId, int driverId) {
-        String query = "UPDATE rides SET driver_id = ?, status = 'Assigned' WHERE ride_id = ?";
-        try (Connection conn = DBConfig.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            stmt.setInt(1, driverId);
-            stmt.setInt(2, rideId);
-            return stmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+        return success;
     }
 }
 
@@ -165,6 +48,175 @@ public class DriverDAO {
 
 
 
+
+
+
+
+
+
+
+//package DAO;
+//
+//import Model.Driver;
+//import Model.Ride;
+//import Utils.DBConfig;
+//import java.sql.*;
+//import java.util.ArrayList;
+//import java.util.List;
+//
+//public class DriverDAO {
+//
+//    // ✅ Register Driver (Insert new driver request)
+//    public boolean registerDriver(Driver driver) {
+//        String query = "INSERT INTO drivers (id, licenseNumber, vehicleType, vehicleNumber, is_approved, status, totalRides, earnings, rating) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+//        try (Connection conn = DBConfig.getConnection();
+//             PreparedStatement stmt = conn.prepareStatement(query)) {
+//
+//            stmt.setInt(1, driver.getId());
+//            stmt.setString(2, driver.getLicenseNumber());
+//            stmt.setString(3, driver.getVehicleType());
+//            stmt.setString(4, driver.getVehicleNumber());
+//            stmt.setBoolean(5, false);  // Default: Not approved
+//            stmt.setString(6, "Pending");
+//            stmt.setInt(7, 0);  // Default total rides = 0
+//            stmt.setDouble(8, 0.0);  // Default earnings = 0
+//            stmt.setDouble(9, 0.0);  // Default rating = 0
+//
+//            return stmt.executeUpdate() > 0;
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
+//
+//    // ✅ Update Driver Status (Active, Busy, Offline)
+//    public boolean updateDriverStatus(int driverId, String status) {
+//        String query = "UPDATE drivers SET status = ? WHERE driver_id = ?";
+//        try (Connection conn = DBConfig.getConnection();
+//             PreparedStatement stmt = conn.prepareStatement(query)) {
+//
+//            stmt.setString(1, status);
+//            stmt.setInt(2, driverId);
+//            return stmt.executeUpdate() > 0;
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
+//
+//    // ✅ Update Driver Earnings
+//    public boolean updateDriverEarnings(int driverId, double amount) {
+//        String query = "UPDATE drivers SET earnings = earnings + ? WHERE driver_id = ?";
+//        try (Connection conn = DBConfig.getConnection();
+//             PreparedStatement stmt = conn.prepareStatement(query)) {
+//
+//            stmt.setDouble(1, amount);
+//            stmt.setInt(2, driverId);
+//            return stmt.executeUpdate() > 0;
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
+//
+//    // ✅ Update Driver Info (Requires Admin Approval)
+//    public boolean updateDriverInfo(int driverId, String license, String vehicleType, String vehicleNumber) {
+//        String query = "UPDATE drivers SET licenseNumber = ?, vehicleType = ?, vehicleNumber = ?, is_approved = false WHERE driver_id = ?";
+//        try (Connection conn = DBConfig.getConnection();
+//             PreparedStatement stmt = conn.prepareStatement(query)) {
+//
+//            stmt.setString(1, license);
+//            stmt.setString(2, vehicleType);
+//            stmt.setString(3, vehicleNumber);
+//            stmt.setInt(4, driverId);
+//            return stmt.executeUpdate() > 0;
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
+//
+//    // ✅ Get All Rides Assigned to a Driver
+//    public List<Ride> getDriverRides(int driverId) {
+//        List<Ride> rides = new ArrayList<>();
+//        String query = "SELECT * FROM rides WHERE driver_id = ?";
+//        try (Connection conn = DBConfig.getConnection();
+//             PreparedStatement stmt = conn.prepareStatement(query)) {
+//
+//            stmt.setInt(1, driverId);
+//            ResultSet rs = stmt.executeQuery();
+//
+//            while (rs.next()) {
+//                Ride ride = new Ride(
+//                    rs.getInt("ride_id"),
+//                    rs.getInt("user_id"),
+//                    rs.getInt("driver_id"),
+//                    rs.getString("pickup"),
+//                    rs.getString("dropoff"),
+//                    rs.getDouble("fare"),
+//                    rs.getString("status") // e.g., Pending, Completed
+//                );
+//                rides.add(ride);
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return rides;
+//    }
+//
+//    // ✅ Confirm Ride (Driver Accepts)
+//    public boolean confirmRide(int rideId, int driverId) {
+//        String query = "UPDATE rides SET status = 'Accepted' WHERE ride_id = ? AND driver_id = ?";
+//        try (Connection conn = DBConfig.getConnection();
+//             PreparedStatement stmt = conn.prepareStatement(query)) {
+//
+//            stmt.setInt(1, rideId);
+//            stmt.setInt(2, driverId);
+//            return stmt.executeUpdate() > 0;
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
+//
+//    // ✅ Get Driver Status
+//    public String getDriverStatus(int driverId) {
+//        String query = "SELECT status FROM drivers WHERE driver_id = ?";
+//        try (Connection conn = DBConfig.getConnection();
+//             PreparedStatement stmt = conn.prepareStatement(query)) {
+//
+//            stmt.setInt(1, driverId);
+//            ResultSet rs = stmt.executeQuery();
+//            if (rs.next()) {
+//                return rs.getString("status");
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return "Unavailable"; // Default
+//    }
+//
+//    // ✅ Assign Ride to Driver
+//    public boolean assignRideToDriver(int rideId, int driverId) {
+//        String query = "UPDATE rides SET driver_id = ?, status = 'Assigned' WHERE ride_id = ?";
+//        try (Connection conn = DBConfig.getConnection();
+//             PreparedStatement stmt = conn.prepareStatement(query)) {
+//
+//            stmt.setInt(1, driverId);
+//            stmt.setInt(2, rideId);
+//            return stmt.executeUpdate() > 0;
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
+//}
+//
+//
+//
+//
+//
+//
 
 
 

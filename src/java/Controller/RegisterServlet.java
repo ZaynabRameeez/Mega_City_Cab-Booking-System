@@ -11,7 +11,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import Model.User;
 import Service.UserService;
 
@@ -23,6 +22,11 @@ public class RegisterServlet extends HttpServlet {
         super();
         this.userService = new UserService();
     }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+    response.sendRedirect("Registration.jsp"); // Redirect to the registration page
+}
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -38,6 +42,7 @@ public class RegisterServlet extends HttpServlet {
         String gender = request.getParameter("gender");
         String address = request.getParameter("address");
 
+   
         // Check if passwords match
         if (!password.equals(confirmPassword)) {
             request.setAttribute("message", "Password and Confirm Password must match.");
@@ -45,18 +50,21 @@ public class RegisterServlet extends HttpServlet {
             return;
         }
 
+        
         // Create user object
+  
         User newUser = new User(username, email, phone, password, nic, gender, address);
-
+        
         // Register user
         String resultMessage = userService.registerUser(newUser);
         request.setAttribute("message", resultMessage);
         
         if ("Registration successful!".equals(resultMessage)) { 
-    // ✅ Redirect to login page if registration is successful
+   
     response.sendRedirect("Login.jsp");
-} else {
-    // ❌ Stay on the registration page if there's an error
+} 
+        else {
+    
     request.getRequestDispatcher("Registration.jsp").forward(request, response);
         }
     }
