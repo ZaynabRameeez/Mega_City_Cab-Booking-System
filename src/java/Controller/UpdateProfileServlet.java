@@ -26,7 +26,7 @@ import Service.UserService;
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
                  maxFileSize = 1024 * 1024 * 10,      // 10MB
                  maxRequestSize = 1024 * 1024 * 50)   // 50MB
-public class ProfileServlet extends HttpServlet {
+public class UpdateProfileServlet extends HttpServlet {
     private static final String UPLOAD_DIR = "C:\\Users\\zainr\\Documents\\NetBeansProjects\\Mega_City_Cab Booking System\\web\\Uploads"; 
     private static final String DEFAULT_PHOTO = "assets/no-profile.jpg"; 
 
@@ -171,7 +171,7 @@ public class ProfileServlet extends HttpServlet {
 //    maxFileSize = 1024 * 1024 * 10, // 10MB
 //    maxRequestSize = 1024 * 1024 * 50 // 50MB
 //)
-//public class ProfileServlet extends HttpServlet {
+//public class UpdateProfileServlet extends HttpServlet {
 //
 //    private static final long serialVersionUID = 1L;
 //    private UserService userService = new UserService();
@@ -377,7 +377,7 @@ public class ProfileServlet extends HttpServlet {
 //    maxFileSize = 1024 * 1024 * 10,       // 10MB
 //    maxRequestSize = 1024 * 1024 * 50     // 50MB
 //)
-//public class ProfileServlet extends HttpServlet {
+//public class UpdateProfileServlet extends HttpServlet {
 //
 //    private final UserService userService = new UserService();
 //
@@ -471,7 +471,7 @@ public class ProfileServlet extends HttpServlet {
 //    maxFileSize = 1024 * 1024 * 10,       // 10MB
 //    maxRequestSize = 1024 * 1024 * 50     // 50MB
 //)
-//public class ProfileServlet extends HttpServlet {
+//public class UpdateProfileServlet extends HttpServlet {
 //
 //    private final UserService userService = new UserService();
 //
@@ -572,11 +572,11 @@ public class ProfileServlet extends HttpServlet {
 //@MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
 //                 maxFileSize = 1024 * 1024 * 10,      // 10MB
 //                 maxRequestSize = 1024 * 1024 * 50)   // 50MB
-//public class ProfileServlet extends HttpServlet {
+//public class UpdateProfileServlet extends HttpServlet {
 //    private static final long serialVersionUID = 1L;
 //    private UserService userService;
 //
-//    public ProfileServlet() {
+//    public UpdateProfileServlet() {
 //        super();
 //        this.userService = new UserService();
 //    }
@@ -644,11 +644,11 @@ public class ProfileServlet extends HttpServlet {
 //import Service.UserService;
 //import Utils.PasswordUtils;
 //
-//public class ProfileServlet extends HttpServlet {
+//public class UpdateProfileServlet extends HttpServlet {
 //    private static final long serialVersionUID = 1L;
 //    private UserService userService;
 //
-//    public ProfileServlet() {
+//    public UpdateProfileServlet() {
 //        super();
 //        this.userService = new UserService();
 //    }

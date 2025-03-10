@@ -50,7 +50,7 @@
     </servlet>
     <servlet>
         <servlet-name>ProfileServlet</servlet-name>
-        <servlet-class>Controller.ProfileServlet</servlet-class>
+        <servlet-class>Controller.UpdateProfileServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>CRUDUserServlet</servlet-name>
@@ -63,6 +63,54 @@
     <servlet>
         <servlet-name>ManageVehicleTypeServlet</servlet-name>
         <servlet-class>Controller.ManageVehicleTypeServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AcceptBookingServlet</servlet-name>
+        <servlet-class>Controller.AcceptBookingServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AddCabPricingServlet</servlet-name>
+        <servlet-class>Controller.AddCabPricingServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AddLocationServlet</servlet-name>
+        <servlet-class>Controller.AddLocationServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AddVehicleServlet</servlet-name>
+        <servlet-class>Controller.AddVehicleServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ApproveDriverRequestServlet</servlet-name>
+        <servlet-class>Controller.ApproveDriverRequestServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CompleteBookingServlet</servlet-name>
+        <servlet-class>Controller.CompleteBookingServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>IgnoreBookingServlet</servlet-name>
+        <servlet-class>Controller.IgnoreBookingServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>NotificationServlet</servlet-name>
+        <servlet-class>Controller.NotificationServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SubmitDriverRequestServlet</servlet-name>
+        <servlet-class>Controller.SubmitDriverRequestServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SubmitRatingServlet</servlet-name>
+        <servlet-class>Controller.SubmitRatingServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateUserProfileServlet</servlet-name>
+        <servlet-class>Controller.UpdateUserProfileServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateUserRoleServlet</servlet-name>
+        <servlet-class>Controller.UpdateUserRoleServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
@@ -119,6 +167,54 @@
     <servlet-mapping>
         <servlet-name>ManageVehicleTypeServlet</servlet-name>
         <url-pattern>/ManageVehicleTypeServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AcceptBookingServlet</servlet-name>
+        <url-pattern>/AcceptBookingServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddCabPricingServlet</servlet-name>
+        <url-pattern>/AddCabPricingServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddLocationServlet</servlet-name>
+        <url-pattern>/AddLocationServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddVehicleServlet</servlet-name>
+        <url-pattern>/AddVehicleServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ApproveDriverRequestServlet</servlet-name>
+        <url-pattern>/ApproveDriverRequestServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CompleteBookingServlet</servlet-name>
+        <url-pattern>/CompleteBookingServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>IgnoreBookingServlet</servlet-name>
+        <url-pattern>/IgnoreBookingServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>NotificationServlet</servlet-name>
+        <url-pattern>/NotificationServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SubmitDriverRequestServlet</servlet-name>
+        <url-pattern>/SubmitDriverRequestServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SubmitRatingServlet</servlet-name>
+        <url-pattern>/SubmitRatingServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateUserProfileServlet</servlet-name>
+        <url-pattern>/UpdateUserProfileServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateUserRoleServlet</servlet-name>
+        <url-pattern>/UpdateUserRoleServlet</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>Main.jsp</welcome-file>

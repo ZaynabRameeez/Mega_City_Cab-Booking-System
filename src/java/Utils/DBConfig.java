@@ -2,33 +2,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-//package Utils;
-//
-//import java.sql.Connection;
-//import java.sql.DriverManager;
-//import java.sql.SQLException;
-//
-///**
-// *
-// * @author zainr
-// */
-//public class DBConfig {
-//    private static final String URL = "jdbc:mysql://localhost:3306/mega_city_cab"; 
-//    private static final String USER = "root"; 
-//    private static final String PASSWORD = "Ashen@2227"; 
-//  
-//static {
-//        try {
-//            Class.forName("com.mysql.cj.jdbc.Driver"); // Load MySQL driver
-//        } catch (ClassNotFoundException e) {
-//            throw new RuntimeException("Error loading MySQL Driver", e);
-//        }
-//    }
-//
-//    public static Connection getConnection() throws SQLException {
-//        return DriverManager.getConnection(URL, USER, PASSWORD);
-//    }
-//}
 
 package Utils;
 
@@ -60,4 +33,6 @@ public class DBConfig {
         }
     }
 }
+
+
 
