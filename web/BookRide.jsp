@@ -84,7 +84,7 @@
         ? vehicleRate.base + (distance * vehicleRate.perKm)
         : vehicleRate.base + (2 * vehicleRate.perKm) + ((distance - 2) * vehicleRate.after2Km);
 
-      document.getElementById("fareEstimate").innerHTML = "<i class='bi bi-currency-rupee'></i> Estimated Fare: Rs. " + estimatedFare.toFixed(2);
+    document.getElementById("fareEstimate").innerHTML = "Estimated Fare: Rs. " + estimatedFare.toFixed(2);
       document.getElementById("calculatedPrice").value = estimatedFare.toFixed(2);
     }
   </script>
@@ -100,7 +100,7 @@
             <span class="nav-link">Hello, <strong><%= email %></strong></span>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="userDashboard.jsp"><i class="bi bi-house"></i> Dashboard</a>
+            <a class="nav-link" href="UsersDashboard.jsp"><i class="bi bi-house"></i> Dashboard</a>
           </li>
         </ul>
       </div>

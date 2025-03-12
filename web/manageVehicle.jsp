@@ -84,7 +84,7 @@
             <span class="nav-link"><i class="bi bi-person-circle"></i> <%= email %></span>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="driverDashboard.jsp"><i class="bi bi-house-door"></i> Dashboard</a>
+            <a class="nav-link" href="DriverDashboard.jsp"><i class="bi bi-house-door"></i> Dashboard</a>
           </li>
         </ul>
       </div>

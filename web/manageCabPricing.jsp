@@ -8,7 +8,7 @@
 <%
     String email = (String) session.getAttribute("email");
     if (email == null) {
-        response.sendRedirect("login.jsp?error=Session Expired");
+        response.sendRedirect("Login.jsp?error=Session Expired");
         return;
     }
 

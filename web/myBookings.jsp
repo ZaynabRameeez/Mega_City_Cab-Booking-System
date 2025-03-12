@@ -10,7 +10,7 @@
 <%
     String email = (String) session.getAttribute("email");
     if (email == null) {
-        response.sendRedirect("login.jsp?error=Session Expired");
+        response.sendRedirect("Login.jsp?error=Session Expired");
         return;
     }
 
@@ -98,7 +98,7 @@
                         <span class="nav-link"><i class="bi bi-person-circle"></i> <strong><%= email %></strong></span>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="userDashboard.jsp"><i class="bi bi-house-door"></i> Dashboard</a>
+                        <a class="nav-link" href="UsersDashboard.jsp"><i class="bi bi-house-door"></i> Dashboard</a>
                     </li>
                 </ul>
             </div>
@@ -115,7 +115,7 @@
             <div class="card-body">
                 <% if (!rs.isBeforeFirst()) { %>
                     <div class="alert alert-warning text-center">
-                        <i class="bi bi-exclamation-triangle-fill"></i> No bookings found. <a href="bookRide.jsp" class="alert-link">Book a Ride</a>
+                        <i class="bi bi-exclamation-triangle-fill"></i> No bookings found. <a href="BookRide.jsp" class="alert-link">Book a Ride</a>
                     </div>
                 <% } else { %>
                     <div class="table-responsive">
