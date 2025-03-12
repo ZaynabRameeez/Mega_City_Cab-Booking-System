@@ -10,76 +10,48 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import jakarta.servlet.http.HttpSession;
+import Utils.DBConfig;
 
 /**
  *
  * @author zainr
  */
 public class SubmitRatingServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet SubmitRatingServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet SubmitRatingServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("email") == null) {
+            response.sendRedirect("Login.jsp?error=Session Expired");
+            return;
+        }
+
+        int bookingId = Integer.parseInt(request.getParameter("bookingId"));
+        int driverId = Integer.parseInt(request.getParameter("driverId"));
+        int rating = Integer.parseInt(request.getParameter("rating"));
+        String feedback = request.getParameter("feedback");
+
+        try (Connection conn = DBConfig.getConnection()) {
+            String insertQuery = "INSERT INTO ratings (booking_id, driver_id, user_id, rating, feedback) " +
+                                 "VALUES (?, ?, (SELECT user_id FROM bookings WHERE booking_id = ?), ?, ?)";
+            PreparedStatement stmt = conn.prepareStatement(insertQuery);
+            stmt.setInt(1, bookingId);
+            stmt.setInt(2, driverId);
+            stmt.setInt(3, bookingId);
+            stmt.setInt(4, rating);
+            stmt.setString(5, feedback);
+
+            stmt.executeUpdate();
+            response.sendRedirect("myBookings.jsp?success=Rating Submitted");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            response.sendRedirect("myBookings.jsp?error=Database Error");
+        }
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }
