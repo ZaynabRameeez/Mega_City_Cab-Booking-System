@@ -168,7 +168,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="logout.jsp"><i class="bi bi-box-arrow-right"></i> Logout</a>
+            <a class="nav-link" href="Logout.jsp"><i class="bi bi-box-arrow-right"></i> Logout</a>
           </li>
         </ul>
       </div>
@@ -182,7 +182,7 @@
       <aside class="col-md-3 col-lg-2 sidebar">
         <ul class="nav flex-column">
           <li class="nav-item">
-            <a class="nav-link active" href="driverDashboard.jsp">
+            <a class="nav-link active" href="DriverDashboard.jsp">
               <i class="bi bi-speedometer2"></i> Dashboard
             </a>
           </li>
@@ -192,7 +192,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="driverProfile.jsp">
+            <a class="nav-link" href="DriverProfile.jsp">
               <i class="bi bi-person-lines-fill"></i> Manage Profile
             </a>
           </li>
@@ -228,7 +228,7 @@
             <a href="manageVehicle.jsp" class="btn btn-primary btn-custom">
               <i class="bi bi-truck"></i> Manage My Vehicle
             </a>
-            <a href="driverProfile.jsp" class="btn btn-secondary btn-custom">
+            <a href="DriverProfile.jsp" class="btn btn-secondary btn-custom">
               <i class="bi bi-person-lines-fill"></i> Manage Profile
             </a>
           </div>

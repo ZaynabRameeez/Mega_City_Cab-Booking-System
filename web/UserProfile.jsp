@@ -1,9 +1,24 @@
 <%-- 
     Document   : UserProfile
-    Created on : Feb 28, 2025, 2:17:05 PM
+    Created on : Feb 28, 2025, 2:17:05?PM
     Author     : zainr
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page session="true" import="java.sql.*, Utils.DBConfig" %>
+<%
+    String email = (String) session.getAttribute("email");
+    if (email == null) {
+        response.sendRedirect("Login.jsp?error=Session Expired");
+        return;
+    }
+
+    Connection conn = DBConfig.getConnection();
+    PreparedStatement stmt = conn.prepareStatement(
+        "SELECT first_name, last_name, mobile, address, profile_image FROM users WHERE email = ?"
+    );
+    stmt.setString(1, email);
+    ResultSet rs = stmt.executeQuery();
+    boolean hasProfile = rs.next();
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -72,7 +87,7 @@
                   <span class="nav-link"><i class="bi bi-person-circle"></i> <strong><%= email %></strong></span>
               </li>
               <li class="nav-item">
-                  <a class="nav-link" href="userDashboard.jsp"><i class="bi bi-house-door"></i> Dashboard</a>
+                  <a class="nav-link" href="UsersDashboard.jsp"><i class="bi bi-house-door"></i> Dashboard</a>
               </li>
           </ul>
       </div>
