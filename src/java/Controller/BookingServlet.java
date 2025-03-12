@@ -10,76 +10,59 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import jakarta.servlet.http.HttpSession;
+import Utils.DBConfig;
 
 /**
  *
  * @author zainr
  */
+
+
+
+
+
+
 public class BookingServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet BookingServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet BookingServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("email") == null) {
+            response.sendRedirect("Login.jsp?error=Session Expired");
+            return;
+        }
+
+        String email = (String) session.getAttribute("email");
+        String pickup = request.getParameter("pickup");
+        String dropoff = request.getParameter("dropoff");
+        String vehicleType = request.getParameter("vehicleType");
+        String rideDate = request.getParameter("rideDate");
+        String rideTime = request.getParameter("rideTime");
+        double calculatedPrice = Double.parseDouble(request.getParameter("calculatedPrice"));
+
+        try (Connection conn = DBConfig.getConnection()) {
+            String insertQuery = "INSERT INTO bookings (user_id, pickup_location, dropoff_location, vehicle_type, ride_date, ride_time, status, price) "
+                               + "VALUES ((SELECT id FROM users WHERE email = ?), ?, ?, ?, ?, ?, 'Pending', ?)";
+            PreparedStatement insertStmt = conn.prepareStatement(insertQuery);
+            insertStmt.setString(1, email);
+            insertStmt.setString(2, pickup);
+            insertStmt.setString(3, dropoff);
+            insertStmt.setString(4, vehicleType);
+            insertStmt.setString(5, rideDate);
+            insertStmt.setString(6, rideTime);
+            insertStmt.setDouble(7, calculatedPrice);
+
+            insertStmt.executeUpdate();
+            response.sendRedirect("myBookings.jsp?success=Ride Booked Successfully");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            response.sendRedirect("BookRide.jsp?error=Database Error");
+        }
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }
