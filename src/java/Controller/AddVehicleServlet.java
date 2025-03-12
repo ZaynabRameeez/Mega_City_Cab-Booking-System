@@ -10,76 +10,73 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Part;
+import java.io.File;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import Utils.DBConfig;
 
 /**
  *
  * @author zainr
  */
+
+
+
+
+
+
+
+@MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
+                 maxFileSize = 1024 * 1024 * 10, // 10MB
+                 maxRequestSize = 1024 * 1024 * 50) // 50MB
 public class AddVehicleServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+    private static final String UPLOAD_DIR = "uploads";
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet AddVehicleServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet AddVehicleServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("email") == null) {
+            response.sendRedirect("login.jsp?error=Session Expired");
+            return;
+        }
+
+        String email = (String) session.getAttribute("email");
+        String brand = request.getParameter("brand");
+        String model = request.getParameter("model");
+        String acType = request.getParameter("ac_type");
+        String plateNumber = request.getParameter("plate_number");
+        String color = request.getParameter("color");
+
+        Part filePart = request.getPart("vehicle_image");
+        String fileName = new File(filePart.getSubmittedFileName()).getName();
+        String uploadPath = getServletContext().getRealPath("") + File.separator + UPLOAD_DIR;
+        File uploadDir = new File(uploadPath);
+        if (!uploadDir.exists()) uploadDir.mkdir();
+        filePart.write(uploadPath + File.separator + fileName);
+
+        try (Connection conn = DBConfig.getConnection()) {
+            String sql = "INSERT INTO vehicles (driver_id, brand, model, ac_type, plate_number, color, vehicle_image) " +
+                         "VALUES ((SELECT id FROM users WHERE email = ?), ?, ?, ?, ?, ?, ?)";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, email);
+            stmt.setString(2, brand);
+            stmt.setString(3, model);
+            stmt.setString(4, acType);
+            stmt.setString(5, plateNumber);
+            stmt.setString(6, color);
+            stmt.setString(7, fileName);
+
+            stmt.executeUpdate();
+            response.sendRedirect("manageVehicle.jsp?success=Vehicle Added");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            response.sendRedirect("manageVehicle.jsp?error=Database Error");
+        }
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }
