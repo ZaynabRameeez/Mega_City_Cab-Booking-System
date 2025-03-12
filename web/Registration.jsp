@@ -24,37 +24,46 @@
     <div class="card p-4 shadow-lg" style="width: 400px;">
         <h3 class="text-center">Register</h3>
 
-        <%-- Display Error Messages from Server --%>
-        <% String errorMessage = (String) request.getAttribute("errorMessage"); %>
-        <% if (errorMessage != null) { %>
-            <div class="alert alert-danger text-center"><%= errorMessage %></div>
+         <!-- Dynamic Error Message Display -->
+        <% String error = request.getParameter("error"); 
+           if (error != null && !error.isEmpty()) { %>
+            <div class="alert alert-danger text-center">
+              <%= error %>
+            </div>
         <% } %>
 
-        <form id="registerForm" action="RegisterServlet" method="post">
+        <form id="registerForm" action="RegisterServlet" method="post" >
             <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input type="text" name="username" id="username" class="form-control" required>
-                <span id="username-error" class="text-danger"></span>
+                 <label for="firstName" class="form-label">First Name</label>
+                 <input type="text" id="firstName" name="firstName" class="form-control" required>
+                <span id="firstName-error" class="text-danger"></span>
             </div>
+            
+             <div class="mb-3">
+                 <label for="lastName" class="form-label">Last Name</label>
+            <input type="text" id="lastName" name="lastName" class="form-control" required>
+                <span id="lastName-error" class="text-danger"></span>
+            </div>
+            
+            <div class="mb-3">
+            <label for="birthday" class="form-label">Birthday</label>
+            <input type="date" id="birthday" name="birthday" class="form-control" required>
+                 <span id="birthday-error" class="birthday"></span>
+          </div>
 
             <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
+                <label for="email" class="form-label">Email Address</label>
                 <input type="email" name="email" id="email" class="form-control" required>
                 <span id="email-error" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
-                <label for="phone" class="form-label">Phone Number</label>
-                <input type="text" name="phone" id="phone" class="form-control" required>
-                <span id="phone-error" class="text-danger"></span>
+              <label for="mobile" class="form-label">Mobile Number (+94)</label>
+            <input type="text" id="mobile" name="mobile" class="form-control" placeholder="+94XXXXXXXXX" required>
+                <span id="mobile-error" class="text-danger"></span>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label">NIC Number</label>
-                <input type="text" class="form-control" id="nic" name="nic" required>
-                <span id="nic-error" class="text-danger"></span>
-            </div>
-
+           
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
                 <div class="input-group">
@@ -65,25 +74,6 @@
                 </div>
                 <span id="password-error" class="text-danger"></span>
             </div>
-
-            <div class="mb-3">
-                <label for="confirmPassword" class="form-label">Confirm Password</label>
-                <div class="input-group">
-                    <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" required>
-                    <button class="btn btn-outline-secondary toggle-password" type="button" data-target="confirmPassword">
-                        <i class="bi bi-eye"></i>
-                    </button>
-                </div>
-                <span id="confirm-password-error" class="text-danger"></span>
-            </div>
-            
-            <div class="mb-3">
-                    <label class="form-label">Gender</label>
-                    <select class="form-select" name="gender" required>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                    </select>
-                </div>
 
                 <div class="mb-3">
                     <label class="form-label">Address</label>
@@ -129,27 +119,13 @@
             }
         }
 
-        function validateConfirmPassword() {
-            let password = document.getElementById("password").value;
-            let confirmPassword = document.getElementById("confirmPassword").value;
-            let confirmPasswordError = document.getElementById("confirm-password-error");
-
-            if (password !== confirmPassword) {
-                confirmPasswordError.textContent = "Passwords do not match.";
-                return false;
-            } else {
-                confirmPasswordError.textContent = "";
-                return true;
-            }
-        }
+        
 
         document.getElementById("phone").addEventListener("keyup", function () {
             validateField(this, /^[0-9]{10}$/, "Phone must be 10 digits.", "phone-error");
         });
 
-        document.getElementById("nic").addEventListener("keyup", function () {
-            validateField(this, /^[0-9]{9}[Vv]$|^[0-9]{12}$/, "NIC must be 123456789V or 123456789012.", "nic-error");
-        });
+       
 
         document.getElementById("password").addEventListener("keyup", validatePassword);
         document.getElementById("confirmPassword").addEventListener("keyup", validateConfirmPassword);
