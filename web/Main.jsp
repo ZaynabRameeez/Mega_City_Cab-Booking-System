@@ -145,7 +145,7 @@
         <div class="hero-content">
             <h1 data-aos="fade-up">Welcome to Mega City Cab</h1>
             <p class="lead" data-aos="fade-up" data-aos-delay="300">Safe, Fast, and Reliable Rides</p>
-            <a href="Registration.jsp" class="btn btn-lg btn-primary" data-aos="fade-up" data-aos-delay="500">Book a Ride</a>
+            <a href="Registration.jsp" class="btn btn-lg btn-primary" data-aos="fade-up" data-aos-delay="500">Register</a>
         </div>
     </section>
 

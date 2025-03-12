@@ -14,14 +14,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
+import Service.LoginService;
 
 public class LoginServlet extends HttpServlet {
+     private static final long serialVersionUID = 1L;
+    private LoginService loginService;
     
-     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.sendRedirect("Login.jsp"); // Redirect GET requests to login page
+    public void init() {
+        loginService = new LoginService();
     }
-
+  
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
