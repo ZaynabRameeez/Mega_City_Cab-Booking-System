@@ -40,11 +40,11 @@
                 <div class="mb-3">
                     <label class="form-label">Vehicle Type:</label>
                     <select name="vehicle_type" class="form-control" required>
-                        <option value="Bike">?? Bike</option>
-                        <option value="Three-wheeler">? Three-wheeler</option>
-                        <option value="Mini Car">? Mini Car</option>
-                        <option value="Car">? Car</option>
-                        <option value="Van">? Van</option>
+                        <option value="Bike"> Bike</option>
+                        <option value="Three-wheeler"> Three-wheeler</option>
+                        <option value="Mini Car">Mini Car</option>
+                        <option value="Car"> Car</option>
+                        <option value="Van"> Van</option>
                     </select>
                 </div>
 
@@ -62,7 +62,7 @@
             </form>
 
             <div class="text-center mt-3">
-                <a href="UsersDashboard.jsp" class="btn btn-secondary">? Back to Dashboard</a>
+                <a href="UsersDashboard.jsp" class="btn btn-secondary">Back to Dashboard</a>
             </div>
         </div>
     </div>
