@@ -15,7 +15,7 @@ public class UserService {
           if (!isValidName(firstName) || !isValidName(lastName)) return false;
         if (!isValidEmail(email)) return false;
         if (!isValidMobile(mobile)) return false;
-        if (password.length() < 6) return false;
+       if (!isValidPassword(password)) return false; 
          if (UserDAO.isUserExists(email, mobile)) return false; // Prevent duplicate users
 
         User newUser = new User(firstName, lastName, birthday, email, mobile, "Customer", password,address);

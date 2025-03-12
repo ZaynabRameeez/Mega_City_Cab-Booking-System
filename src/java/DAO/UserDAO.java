@@ -12,17 +12,17 @@ public class UserDAO {
     
     // ✅ Check if a User Already Exists
     public static boolean isUserExists(String email, String mobile) {
-        try (Connection conn = DBConfig.getConnection()) {
-            String sql = "SELECT id FROM users WHERE email = ? OR mobile = ?";
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, email);
-            stmt.setString(2, mobile);
-            ResultSet rs = stmt.executeQuery();
-            return rs.next(); // Returns true if user exists
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
+       try (Connection conn = DBConfig.getConnection();
+     PreparedStatement stmt = conn.prepareStatement("SELECT id FROM users WHERE email = ? OR mobile = ?")) {
+    stmt.setString(1, email);
+    stmt.setString(2, mobile);
+    try (ResultSet rs = stmt.executeQuery()) {
+        return rs.next();
+    }
+} catch (Exception e) {
+    e.printStackTrace();
+}
+return false;
     }
 
   // ✅ Insert New User into Database

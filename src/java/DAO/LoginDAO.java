@@ -15,6 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import Model.User;
 import Utils.DBConfig;
+import Utils.PasswordUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -40,4 +41,11 @@ public class LoginDAO {
         }
         return user;
     }
+    public static User authenticateUser(String email, String password) {
+    User user = getUserByEmail(email);
+    if (user != null && PasswordUtils.verifyPassword(password, user.getPassword())) {
+        return user;
+    }
+    return null;
+}
 }
