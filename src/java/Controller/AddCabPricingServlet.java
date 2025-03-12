@@ -10,76 +10,41 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import Utils.DBConfig;
 
 /**
  *
  * @author zainr
  */
+
+
+
 public class AddCabPricingServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet AddCabPricingServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet AddCabPricingServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+
+        String vehicleType = request.getParameter("vehicle_type");
+        double baseFare = Double.parseDouble(request.getParameter("base_fare"));
+        double perKmRate = Double.parseDouble(request.getParameter("per_km_rate"));
+        double after2kmRate = Double.parseDouble(request.getParameter("after_2km_rate"));
+
+        try (Connection conn = DBConfig.getConnection()) {
+            String insertQuery = "INSERT INTO cab_pricing (vehicle_type, base_fare, per_km_rate, after_2km_rate) VALUES (?, ?, ?, ?)";
+            PreparedStatement stmt = conn.prepareStatement(insertQuery);
+            stmt.setString(1, vehicleType);
+            stmt.setDouble(2, baseFare);
+            stmt.setDouble(3, perKmRate);
+            stmt.setDouble(4, after2kmRate);
+
+            stmt.executeUpdate();
+            response.sendRedirect("manageCabPricing.jsp?success=Pricing Added");
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect("manageCabPricing.jsp?error=Database Error");
+        }
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }
