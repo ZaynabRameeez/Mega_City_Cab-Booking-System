@@ -5,10 +5,12 @@
 --%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="Model.User" %>
+<%@ page session="true" %>
 <%
-    User user = (User) session.getAttribute("user");
-    if (user == null) {
-        response.sendRedirect("Login.jsp");
+    String email = (String) session.getAttribute("email");
+    String role = (String) session.getAttribute("role");
+    if (email == null || !role.equalsIgnoreCase("Customer")) {
+        response.sendRedirect("Login.jsp?error=Unauthorized Access");
         return;
     }
 %>
@@ -117,7 +119,7 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-        <span class="navbar-brand">Welcome, <%= user.getUsername() %>!</span>
+        <span class="navbar-brand">Welcome,  <%= email %>!!</span>
         <button id="themeToggle" class="btn btn-secondary">☀️🌙</button>
     </div>
 </nav>
@@ -125,7 +127,7 @@
 <!-- Sidebar -->
 <div id="sidebar" class="sidebar">
     <h2>Mega Cab</h2>
-    <a href="UserDashboard.jsp">🏠 Dashboard</a>
+    <a href="UsersDashboard.jsp">🏠 Dashboard</a>
     <a href="BookRide.jsp">🚖 Book a Ride</a>
     <a href="MyRides.jsp">📅 My Rides</a>
     <a href="Payments.jsp">💳 Payments</a>

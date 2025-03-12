@@ -6,7 +6,6 @@
 package Controller;
 
 import Model.User;
-import DAO.UserDAO;
 import Utils.PasswordUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -27,40 +26,33 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
+         String email = request.getParameter("email").trim();
+        String password = request.getParameter("password").trim();
+        
+           User user = loginService.Login(email, password);
 
-        if (email == null || password == null || email.trim().isEmpty() || password.trim().isEmpty()) {
-            request.setAttribute("errorMessage", "Email and password are required.");
-            request.getRequestDispatcher("Login.jsp").forward(request, response);
-            return;
-        }
-
-        UserDAO userDAO = new UserDAO();
-        User user = userDAO.getUserByEmail(email);
-
-        if (user != null && PasswordUtils.verifyPassword(password, user.getPassword())) {
-
-             String redirectURL = "UsersDashboard.jsp"; // Default for normal users
-            // Store user session
+          if (user != null) {
             HttpSession session = request.getSession();
-            session.setAttribute("user", user);
+            session.setAttribute("userId", user.getId()); // ✅ getId() now exists
+            session.setAttribute("email", user.getEmail());
+            session.setAttribute("role", user.getRole());
 
-             if ("admin".equalsIgnoreCase(user.getRole())) {
-                redirectURL = "AdminDashboard.jsp";
-            } else if ("approved".equalsIgnoreCase(user.getStatus()) && "driver".equalsIgnoreCase(user.getRole())) {
-                redirectURL = "DriverDashboard.jsp";
+            switch (user.getRole().toLowerCase()) {
+                case "customer": response.sendRedirect("UsersDashboard.jsp"); break;
+                case "admin": response.sendRedirect("AdminDashboard.jsp"); break;
+                case "driver": response.sendRedirect("DriverDashboard.jsp"); break;
+                default: response.sendRedirect("Login.jsp?error=Invalid Role");
             }
-
-            response.sendRedirect(redirectURL); // Ensure only one redirect happens
-
         } else {
-            request.setAttribute("errorMessage", "Invalid email or password.");
-            request.getRequestDispatcher("Login.jsp").forward(request, response);
+            response.sendRedirect("Login.jsp?error=Invalid Email or Password");
         }
     }
 }
 
+
+      
+
+       
 
 
 

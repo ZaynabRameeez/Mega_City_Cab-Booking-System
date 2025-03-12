@@ -17,10 +17,6 @@
         <servlet-class>Controller.ServletContextListener</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>AdminServlet</servlet-name>
-        <servlet-class>Controller.AdminServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>LogoutServlet</servlet-name>
         <servlet-class>Controller.LogoutServlet</servlet-class>
     </servlet>
@@ -29,40 +25,20 @@
         <servlet-class>Controller.ResetPasswordServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>AdminDashboardServlet</servlet-name>
-        <servlet-class>Controller.AdminDashboardServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>DriverServlet</servlet-name>
-        <servlet-class>Controller.DriverServlet</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>BookingServlet</servlet-name>
         <servlet-class>Controller.BookingServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>GetLocationsServlet</servlet-name>
-        <servlet-class>Controller.GetLocationsServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>FareCalculatorServlet</servlet-name>
-        <servlet-class>Controller.FareCalculatorServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ProfileServlet</servlet-name>
+        <servlet-name>UpdateProfileServlet</servlet-name>
         <servlet-class>Controller.UpdateProfileServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>CRUDUserServlet</servlet-name>
-        <servlet-class>Controller.CRUDUserServlet</servlet-class>
+        <servlet-class>Controller.UpdateUserServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>CRUDDriverServlet</servlet-name>
-        <servlet-class>Controller.CRUDDriverServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ManageVehicleTypeServlet</servlet-name>
-        <servlet-class>Controller.ManageVehicleTypeServlet</servlet-class>
+        <servlet-name>UpdateVehicleServlet</servlet-name>
+        <servlet-class>Controller.UpdateVehicleServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>AcceptBookingServlet</servlet-name>
@@ -112,6 +88,10 @@
         <servlet-name>UpdateUserRoleServlet</servlet-name>
         <servlet-class>Controller.UpdateUserRoleServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>UpdateBookingServlet</servlet-name>
+        <servlet-class>Controller.UpdateBookingServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/LoginServlet</url-pattern>
@@ -119,10 +99,6 @@
     <servlet-mapping>
         <servlet-name>RegisterServlet</servlet-name>
         <url-pattern>/RegisterServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AdminServlet</servlet-name>
-        <url-pattern>/AdminServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>LogoutServlet</servlet-name>
@@ -133,40 +109,20 @@
         <url-pattern>/ResetPasswordServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>AdminDashboardServlet</servlet-name>
-        <url-pattern>/AdminDashboardServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>DriverServlet</servlet-name>
-        <url-pattern>/DriverServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>BookingServlet</servlet-name>
         <url-pattern>/BookingServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>GetLocationsServlet</servlet-name>
-        <url-pattern>/GetLocationsServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>FareCalculatorServlet</servlet-name>
-        <url-pattern>/FareCalculatorServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ProfileServlet</servlet-name>
-        <url-pattern>/ProfileServlet</url-pattern>
+        <servlet-name>UpdateProfileServlet</servlet-name>
+        <url-pattern>/UpdateProfileServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>CRUDUserServlet</servlet-name>
         <url-pattern>/CRUDUserServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>CRUDDriverServlet</servlet-name>
-        <url-pattern>/CRUDDriverServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ManageVehicleTypeServlet</servlet-name>
-        <url-pattern>/ManageVehicleTypeServlet</url-pattern>
+        <servlet-name>UpdateVehicleServlet</servlet-name>
+        <url-pattern>/UpdateVehicleServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AcceptBookingServlet</servlet-name>
@@ -215,6 +171,10 @@
     <servlet-mapping>
         <servlet-name>UpdateUserRoleServlet</servlet-name>
         <url-pattern>/UpdateUserRoleServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateBookingServlet</servlet-name>
+        <url-pattern>/UpdateBookingServlet</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>Main.jsp</welcome-file>

@@ -1,36 +1,37 @@
+
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-/**
- *
- * @author zainr
- */
+
+
 
 package Controller;
 
-import java.io.File;
+
+import Utils.DBConfig;
 import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
+import jakarta.servlet.http.HttpSession;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import Utils.DBConfig;
-
-
 
 
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 2, // 2MB
                  maxFileSize = 1024 * 1024 * 10, // 10MB
                  maxRequestSize = 1024 * 1024 * 50) // 50MB
-public class UpdateProfileServlet extends HttpServlet {
+public class UpdateVehicleServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final String UPLOAD_DIR = "uploads";
 
@@ -44,12 +45,13 @@ public class UpdateProfileServlet extends HttpServlet {
         }
 
         String email = (String) session.getAttribute("email");
-        String firstName = request.getParameter("first_name");
-        String lastName = request.getParameter("last_name");
-        String mobile = request.getParameter("mobile");
-        String address = request.getParameter("address");
+        String brand = request.getParameter("brand");
+        String model = request.getParameter("model");
+        String acType = request.getParameter("ac_type");
+        String plateNumber = request.getParameter("plate_number");
+        String color = request.getParameter("color");
 
-        Part filePart = request.getPart("profile_image");
+        Part filePart = request.getPart("vehicle_image");
         String fileName = filePart.getSubmittedFileName();
         String uploadPath = getServletContext().getRealPath("") + File.separator + UPLOAD_DIR;
 
@@ -59,26 +61,28 @@ public class UpdateProfileServlet extends HttpServlet {
         }
 
         try (Connection conn = DBConfig.getConnection()) {
-            String sql = "UPDATE users SET first_name = ?, last_name = ?, mobile = ?, address = ?" +
-                         (fileName.isEmpty() ? "" : ", profile_image = ?") + 
-                         " WHERE email = ?";
+            String sql = "UPDATE vehicles SET brand = ?, model = ?, ac_type = ?, plate_number = ?, color = ?" +
+                         (fileName.isEmpty() ? "" : ", vehicle_image = ?") +
+                         " WHERE driver_id = (SELECT id FROM users WHERE email = ?)";
             PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, firstName);
-            stmt.setString(2, lastName);
-            stmt.setString(3, mobile);
-            stmt.setString(4, address);
+            stmt.setString(1, brand);
+            stmt.setString(2, model);
+            stmt.setString(3, acType);
+            stmt.setString(4, plateNumber);
+            stmt.setString(5, color);
+
             if (!fileName.isEmpty()) {
-                stmt.setString(5, fileName);
-                stmt.setString(6, email);
+                stmt.setString(6, fileName);
+                stmt.setString(7, email);
             } else {
-                stmt.setString(5, email);
+                stmt.setString(6, email);
             }
 
             stmt.executeUpdate();
-            response.sendRedirect("DriverProfile.jsp?success=Profile Updated");
+            response.sendRedirect("manageVehicle.jsp?success=Vehicle Updated");
         } catch (SQLException e) {
             e.printStackTrace();
-            response.sendRedirect("DriverProfile.jsp?error=Database Error");
+            response.sendRedirect("manageVehicle.jsp?error=Database Error");
         }
     }
 }

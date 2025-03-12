@@ -8,7 +8,7 @@
 <%
     String email = (String) session.getAttribute("email");
     if (email == null) {
-        response.sendRedirect("login.jsp?error=Session Expired");
+        response.sendRedirect("Login.jsp?error=Session Expired");
         return;
     }
 
@@ -122,7 +122,7 @@
           </table>
         </div>
         <div class="mt-4 text-center">
-          <a href="adminDashboard.jsp" class="btn btn-secondary">
+          <a href="AdminDashboard.jsp" class="btn btn-secondary">
             <i class="bi bi-arrow-left"></i> Back to Dashboard
           </a>
         </div>
