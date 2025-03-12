@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import Utils.DBConfig;
+import jakarta.servlet.http.HttpSession;
 
 /**
  *
@@ -21,15 +22,6 @@ import Utils.DBConfig;
  */
 
 
-
-
-import com.util.DatabaseConnection;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import jakarta.servlet.http.HttpSession;
-
-@WebServlet("/IgnoreBookingServlet")
 public class IgnoreBookingServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
@@ -38,22 +30,22 @@ public class IgnoreBookingServlet extends HttpServlet {
 
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("email") == null || !session.getAttribute("role").equals("Driver")) {
-            response.sendRedirect("login.jsp?error=Unauthorized Access");
+            response.sendRedirect("Login.jsp?error=Unauthorized Access");
             return;
         }
 
         int bookingId = Integer.parseInt(request.getParameter("bookingId"));
 
-        try (Connection conn = DatabaseConnection.getConnection()) {
+        try (Connection conn = DBConfig.getConnection()) {
             String updateQuery = "UPDATE bookings SET status = 'Cancelled' WHERE booking_id = ?";
             PreparedStatement stmt = conn.prepareStatement(updateQuery);
             stmt.setInt(1, bookingId);
 
             stmt.executeUpdate();
-            response.sendRedirect("driverDashboard.jsp?success=Ride Ignored");
+            response.sendRedirect("DriverDashboard.jsp?success=Ride Ignored");
         } catch (SQLException e) {
             e.printStackTrace();
-            response.sendRedirect("driverDashboard.jsp?error=Database Error");
+            response.sendRedirect("DriverDashboard.jsp?error=Database Error");
         }
     }
 }
