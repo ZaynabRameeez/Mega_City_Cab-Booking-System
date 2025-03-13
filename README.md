@@ -30,5 +30,5 @@ Set up MySQL database:
 
 Create a new database named mega_city_cab.
 Import the provided SQL script (mega_city_cab.sql).
-4️⃣ Configure DBConfig.java with your database credentials.
-5️⃣ Deploy the project on Apache Tomcat.
+Configure DBConfig.java with your database credentials.
+Deploy the project on Apache Tomcat.
