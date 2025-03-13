@@ -5,7 +5,6 @@
 package Controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -52,6 +51,7 @@ public class CompleteBookingServlet extends HttpServlet {
             String updateQuery = "UPDATE bookings SET status = 'Completed', completed_at = NOW() WHERE booking_id = ?";
             PreparedStatement stmt = conn.prepareStatement(updateQuery);
             stmt.setInt(1, bookingId);
+            
             
             String notifyUserQuery = "INSERT INTO notifications (user_id, message) " +
                          "VALUES ((SELECT user_id FROM bookings WHERE booking_id = ?), 'Your ride has been successfully completed.')";

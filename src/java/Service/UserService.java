@@ -11,14 +11,15 @@ public class UserService {
 
     //Register a New User
      // ✅ Validate User Input & Register User
-    public boolean registerUser(String firstName, String lastName, String birthday, String email, String mobile, String password, String address) {
+    public boolean registerUser(String firstName, String lastName, String birthday, String email, String mobile, String password, String address,String nic) {
           if (!isValidName(firstName) || !isValidName(lastName)) return false;
         if (!isValidEmail(email)) return false;
         if (!isValidMobile(mobile)) return false;
        if (!isValidPassword(password)) return false; 
-         if (UserDAO.isUserExists(email, mobile)) return false; // Prevent duplicate users
+       if (!isValidNIC(nic)) return false; // Validate NIC
+         if (UserDAO.isUserExists(email, mobile,nic)) return false; // Prevent duplicate users
 
-        User newUser = new User(firstName, lastName, birthday, email, mobile, "Customer", password,address);
+        User newUser = new User(firstName, lastName, birthday, email, mobile, "Customer", password,address,nic);
         return UserDAO.insertUser(newUser);
     }
         private boolean isValidName(String name) {
@@ -34,6 +35,9 @@ public class UserService {
     }
     private boolean isValidPassword(String password){
         return password.matches("^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$");
+    }
+    private boolean isValidNIC(String nic) {
+        return nic.matches("^\\d{9}V$|^\\d{12}$");
     }
         
         public boolean resetPassword(String email, String hashedPassword) {

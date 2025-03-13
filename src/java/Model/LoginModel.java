@@ -11,13 +11,9 @@ import DAO.LoginDAO;
  */
 public class LoginModel {
     
-    // ✅ Authenticate User and Validate Password
+    
+    // ✅ Authenticate User using DAO (handles password verification)
     public static User authenticateUser(String email, String password) {
-        User user = LoginDAO.getUserByEmail(email);
-        
-        if (user != null && user.getPassword().equals(password)) {
-            return user; // Return user if password matches
-        }
-        return null; // Return null if authentication fails
+        return LoginDAO.authenticateUser(email, password); // Use DAO method for proper hashing
     }
 }

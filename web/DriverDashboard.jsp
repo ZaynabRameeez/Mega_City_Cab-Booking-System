@@ -235,7 +235,7 @@
           
           <!-- Filter Section -->
           <h4>Filter Rides <i class="bi bi-funnel"></i></h4>
-          <form method="GET" action="driverDashboard.jsp" class="row g-3 mb-4">
+          <form method="GET" action="DriverDashboard.jsp" class="row g-3 mb-4">
             <div class="col-md-5">
               <label class="form-label">Pickup Location:</label>
               <select name="filterPickup" class="form-select">

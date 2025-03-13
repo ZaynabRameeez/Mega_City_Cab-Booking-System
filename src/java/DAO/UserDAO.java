@@ -11,11 +11,12 @@ import java.sql.SQLException;
 public class UserDAO {
     
     // ✅ Check if a User Already Exists
-    public static boolean isUserExists(String email, String mobile) {
+    public static boolean isUserExists(String email, String mobile,String nic) {
        try (Connection conn = DBConfig.getConnection();
-     PreparedStatement stmt = conn.prepareStatement("SELECT id FROM users WHERE email = ? OR mobile = ?")) {
+     PreparedStatement stmt = conn.prepareStatement("SELECT id FROM users WHERE email = ? OR mobile OR nic = ?")) {
     stmt.setString(1, email);
     stmt.setString(2, mobile);
+    stmt.setString(3, nic);
     try (ResultSet rs = stmt.executeQuery()) {
         return rs.next();
     }
@@ -28,7 +29,7 @@ return false;
   // ✅ Insert New User into Database
     public static boolean insertUser(User user) {
         try (Connection conn = DBConfig.getConnection()) {
-            String sql = "INSERT INTO users (first_name, last_name, birthday, email, mobile, role, password,address) VALUES (?, ?, ?, ?, ?, ?, ?,?)";
+            String sql = "INSERT INTO users (first_name, last_name, birthday, email, mobile, role, password,address,nic) VALUES (?, ?, ?, ?, ?, ?, ?,?,?)";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, user.getFirstName());
             stmt.setString(2, user.getLastName());
@@ -38,6 +39,7 @@ return false;
             stmt.setString(6, user.getRole());
             stmt.setString(7, PasswordUtils.hashPassword(user.getPassword())); 
             stmt.setString(8, user.getAddress());
+            stmt.setString(9, user.getNic());
 
             return stmt.executeUpdate() > 0; // Returns true if insert is successful
         } catch (Exception e) {

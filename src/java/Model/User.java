@@ -19,7 +19,20 @@
     private String role;
     private String password;
     private String address;
+    private String nic;
      
+     public User(int id, String firstName, String lastName, String birthday, String email, String mobile, String role, String password, String address,String nic) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthday = birthday;
+        this.email = email;
+        this.mobile = mobile;
+        this.role = role;
+        this.password = password;
+        this.address = address;
+        this.nic=nic;
+    }
 
 
 
@@ -29,7 +42,7 @@
         this.role = role;
         this.password = password;
     }
-        public User(String firstName, String lastName, String birthday, String email, String mobile, String role, String password,String address) {
+        public User(String firstName, String lastName, String birthday, String email, String mobile, String role, String password,String address,String nic) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthday = birthday;
@@ -38,6 +51,8 @@
         this.role = role;
         this.password = password;
         this.address = address;
+        this.nic=nic;
+        
    
     }
 
@@ -76,5 +91,15 @@
     public String getAddress() {
         return address;
     }
+    
+    // Setter for NIC (if needed)
+    public void setNic(String nic) {
+        this.nic = nic;
+    }
+
+    public String getNic() {
+        return nic;
+    }
+
 
     }      

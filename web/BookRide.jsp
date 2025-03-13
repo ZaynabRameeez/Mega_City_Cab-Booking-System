@@ -164,7 +164,15 @@
                 <p id="fareEstimate" class="text-success fw-bold"></p>
                 <input type="hidden" id="calculatedPrice" name="calculatedPrice">
               </div>
-
+                
+             <div class="mb-3">
+              <label for="paymentMethod" class="form-label">Payment Method</label>
+              <select id="paymentMethod" name="paymentMethod" class="form-control" required>
+              <option value="Cash">Cash</option>
+              <option value="Card">Card</option>
+            
+           </select>
+            </div>
               <button type="submit" class="btn btn-primary w-100 btn-custom">Book Now</button>
             </form>
             <div class="text-center mt-3">

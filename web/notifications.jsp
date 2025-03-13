@@ -8,7 +8,12 @@
 <%@ page session="true" import="java.util.List" %>
 <%
     List<String> notifications = (List<String>) request.getAttribute("notifications");
+    String role = (String) session.getAttribute("role");
+    String dashboard = role.equalsIgnoreCase("admin") ? "AdminDashboard.jsp" : 
+                       role.equalsIgnoreCase("driver") ? "DriverDashboard.jsp" : "UsersDashboard.jsp";
 %>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,7 +25,7 @@
 <body class="bg-light">
     <div class="container mt-5">
         <div class="card shadow-lg p-4">
-            <h2>Notifications ??</h2>
+            <h2>Notifications 🔔</h2>
             <% if (notifications == null || notifications.isEmpty()) { %>
                 <div class="alert alert-info">No new notifications.</div>
             <% } else { %>
@@ -31,7 +36,7 @@
                 </ul>
             <% } %>
             <div class="text-center mt-4">
-                <a href="dashboard.jsp" class="btn btn-secondary">? Back to Dashboard</a>
+                <a href="<%= dashboard %>" class="btn btn-secondary">🔙 Back to Dashboard</a>
             </div>
         </div>
     </div>

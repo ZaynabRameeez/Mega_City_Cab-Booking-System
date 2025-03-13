@@ -8,6 +8,10 @@ package Utils;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+
 
 public class DBConfig {
     private static final String URL = "jdbc:mysql://localhost:3306/mega_city_cab"; 
@@ -31,8 +35,35 @@ public class DBConfig {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        
     }
+
+   public static int getUserIdByEmail(String email) {
+    int userId = -1; // Default value in case the email is not found
+    String query = "SELECT id FROM users WHERE email = ?";
+
+    try (Connection conn = getConnection();
+         PreparedStatement stmt = conn.prepareStatement(query)) {
+        
+        stmt.setString(1, email);
+        ResultSet rs = stmt.executeQuery(); // Ensure ResultSet is imported
+        
+        if (rs.next()) {
+            userId = rs.getInt("id");
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    
+    return userId;
 }
+
+}
+
+    
+
+
+
 
 
 

@@ -36,10 +36,11 @@ public class RegisterServlet extends HttpServlet {
         String mobile = request.getParameter("mobile").trim();
         String password = request.getParameter("password").trim();
         String address = request.getParameter("address");
+        String nic = request.getParameter("nic").trim(); 
 
    
       
-        boolean success = userService.registerUser(firstName, lastName, birthday, email, mobile, password,address);
+        boolean success = userService.registerUser(firstName, lastName, birthday, email, mobile, password,address,nic);
         
        
      

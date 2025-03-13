@@ -16,15 +16,48 @@ import java.sql.SQLException;
 import jakarta.servlet.http.HttpSession;
 import Utils.DBConfig;
 
+
+
 /**
  *
  * @author zainr
  */
 
-
-
-
-
+//
+//
+//
+//public class BookingServlet extends HttpServlet {
+//    private static final long serialVersionUID = 1L;
+//    private BookingService bookingService = new BookingService();
+//
+//    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+//            throws ServletException, IOException {
+//
+//        HttpSession session = request.getSession(false);
+//        if (session == null || session.getAttribute("email") == null) {
+//            response.sendRedirect("Login.jsp?error=Session Expired");
+//            return;
+//        }
+//
+//        String email = (String) session.getAttribute("email");
+//        int userId = DBConfig.getUserIdByEmail(email); // You should create this method in DBConfig
+//        String pickup = request.getParameter("pickup");
+//        String dropoff = request.getParameter("dropoff");
+//        String vehicleType = request.getParameter("vehicleType");
+//        String rideDate = request.getParameter("rideDate");
+//        String rideTime = request.getParameter("rideTime");
+//        double price = Double.parseDouble(request.getParameter("calculatedPrice"));
+//
+//        Booking booking = new Booking(userId, pickup, dropoff, vehicleType, rideDate, rideTime, price);
+//        boolean isBooked = bookingService.bookRide(booking);
+//
+//        if (isBooked) {
+//            response.sendRedirect("myBookings.jsp?success=Ride Booked Successfully");
+//        } else {
+//            response.sendRedirect("BookRide.jsp?error=Booking Failed");
+//        }
+//    }
+//}
 
 public class BookingServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;

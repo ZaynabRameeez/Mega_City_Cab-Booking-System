@@ -62,6 +62,13 @@
             <input type="text" id="mobile" name="mobile" class="form-control" placeholder="+94XXXXXXXXX" required>
                 <span id="mobile-error" class="text-danger"></span>
             </div>
+            
+            <div class="mb-3">
+              <label for="nic" class="form-label">NIC</label>
+               <input type="text" id="nic" name="nic" class="form-control" required>
+               <span id="nic-error" class="text-danger"></span>
+              </div>
+
 
            
             <div class="mb-3">
@@ -90,79 +97,77 @@
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        let form = document.getElementById("registerForm");
+  document.addEventListener("DOMContentLoaded", function () {
+    let form = document.getElementById("registerForm");
 
-        function validateField(input, regex, errorMessage, errorSpanId) {
-            let errorSpan = document.getElementById(errorSpanId);
-            if (!regex.test(input.value)) {
-                errorSpan.textContent = errorMessage;
-                return false;
-            } else {
-                errorSpan.textContent = "";
-                return true;
-            }
+    function validateField(input, regex, errorMessage, errorSpanId) {
+        let errorSpan = document.getElementById(errorSpanId);
+        if (!regex.test(input.value)) {
+            errorSpan.textContent = errorMessage;
+            return false;
+        } else {
+            errorSpan.textContent = "";
+            return true;
         }
+    }
 
-        function validatePassword() {
-            let password = document.getElementById("password").value;
-            let passwordError = document.getElementById("password-error");
-            let passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    function validatePassword() {
+        let password = document.getElementById("password").value;
+        let passwordError = document.getElementById("password-error");
+        let passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
 
-            if (!passwordRegex.test(password)) {
-                passwordError.textContent = "Min 8 chars, 1 letter, 1 number, 1 special char";
-                return false;
-            } else {
-                passwordError.textContent = "Password is strong!";
-                passwordError.style.color = "green";
-                return true;
-            }
+        if (!passwordRegex.test(password)) {
+            passwordError.textContent = "Min 8 chars, 1 letter, 1 number, 1 special char";
+            return false;
+        } else {
+            passwordError.textContent = "Password is strong!";
+            passwordError.style.color = "green";
+            return true;
         }
+    }
 
-        
-
-        document.getElementById("phone").addEventListener("keyup", function () {
-            validateField(this, /^[0-9]{10}$/, "Phone must be 10 digits.", "phone-error");
-        });
-
-       
-
-        document.getElementById("password").addEventListener("keyup", validatePassword);
-        document.getElementById("confirmPassword").addEventListener("keyup", validateConfirmPassword);
-
-        form.addEventListener("submit", function (event) {
-            let isPhoneValid = validateField(document.getElementById("phone"), /^[0-9]{10}$/, "Phone must be 10 digits.", "phone-error");
-            let isNicValid = validateField(document.getElementById("nic"), /^[0-9]{9}[Vv]$|^[0-9]{12}$/, "NIC must be 123456789V or 123456789012.", "nic-error");
-            let isPasswordValid = validatePassword();
-            let isConfirmPasswordValid = validateConfirmPassword();
-
-            if (!isPhoneValid || !isNicValid || !isPasswordValid || !isConfirmPasswordValid) {
-                event.preventDefault();
-            }
-        });
-
-        document.querySelectorAll(".toggle-password").forEach(button => {
-            button.addEventListener("click", function () {
-                let targetId = this.getAttribute("data-target");
-                let input = document.getElementById(targetId);
-                let icon = this.querySelector("i");
-
-                if (input.type === "password") {
-                    input.type = "text";
-                    icon.classList.replace("bi-eye", "bi-eye-slash");
-                } else {
-                    input.type = "password";
-                    icon.classList.replace("bi-eye-slash", "bi-eye");
-                }
-            });
-        });
-
-        <% String successMessage = (String) request.getAttribute("successMessage"); %>
-        <% if (successMessage != null) { %>
-            alert("<%= successMessage %>");
-            window.location.href = "Login.jsp";
-        <% } %>
+    document.getElementById("mobile").addEventListener("keyup", function () {
+        validateField(this, /^[0-9]{10}$/, "Phone must be 10 digits.", "mobile-error");
     });
+
+    document.getElementById("nic").addEventListener("keyup", function () {
+        validateField(this, /^[0-9]{9}[Vv]$|^[0-9]{12}$/, "NIC must be in format 123456789V or 123456789012.", "nic-error");
+    });
+
+    document.getElementById("email").addEventListener("keyup", function () {
+        validateField(this, /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Enter a valid email.", "email-error");
+    });
+
+    document.getElementById("password").addEventListener("keyup", validatePassword);
+
+    form.addEventListener("submit", function (event) {
+        let isMobileValid = validateField(document.getElementById("mobile"), /^[0-9]{10}$/, "Phone must be 10 digits.", "mobile-error");
+        let isNicValid = validateField(document.getElementById("nic"), /^[0-9]{9}[Vv]$|^[0-9]{12}$/, "NIC must be 123456789V or 123456789012.", "nic-error");
+        let isEmailValid = validateField(document.getElementById("email"), /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Enter a valid email.", "email-error");
+        let isPasswordValid = validatePassword();
+
+        if (!isMobileValid || !isNicValid || !isEmailValid || !isPasswordValid) {
+            event.preventDefault(); // Stop form submission if validation fails
+        }
+    });
+
+    document.querySelectorAll(".toggle-password").forEach(button => {
+        button.addEventListener("click", function () {
+            let targetId = this.getAttribute("data-target");
+            let input = document.getElementById(targetId);
+            let icon = this.querySelector("i");
+
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.replace("bi-eye", "bi-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.replace("bi-eye-slash", "bi-eye");
+            }
+        });
+    });
+});
+
 </script>
 
 </body>

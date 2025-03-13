@@ -33,7 +33,7 @@
 
         /* Hero Section */
         .hero-section {
-            background: url('Img/Taxi2.jpg') no-repeat center center/cover;
+            background: url('img/Car.jpg') no-repeat center center/cover;
             height: 100vh;
             display: flex;
             align-items: center;
